@@ -1,7 +1,10 @@
 # Atelio Design System
 
 > 版本：v0.1（Phase 2）・最後更新：2026-11-19
-> 本文件定義設計語言與 Token。Phase 3 會把 Token 實作成 SCSS，並建立 `/dev/styleguide` 頁面作為「活的設計規範」：所有元件的實際樣式與狀態都在那一頁呈現，這也是本專案高保真 UI 的交付形式（不另做 Figma 稿，設計直接以程式碼為準，避免設計稿和實作不一致）。
+> 本文件定義設計語言與 Token。高保真設計稿分三個層次交付：
+> 1. **視覺設計稿（初稿）**：Design System 規範頁＋首頁、列表、詳細頁的 Desktop／Mobile 版，用於確認視覺方向。
+> 2. **Figma 設計檔**：視覺方向確認後，以設計稿為基礎在 Figma 建立元件（Components／Variants）、Variables（色彩、間距 Token）與 Auto Layout 版面，作為求職作品集的設計交付物。
+> 3. **`/dev/styleguide` 頁面**（Phase 3）：Token 實作成 SCSS 後的「活的設計規範」，確認程式與設計稿一致。
 
 ---
 
