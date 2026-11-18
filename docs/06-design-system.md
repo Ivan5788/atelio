@@ -19,8 +19,8 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | 關鍵字 | 在介面上的表現 |
 | --- | --- |
-| 奶油紙頁 | 奶油色背景（不是純白），虛線與細線分隔 |
-| 可可色鋼筆 | 文字與描邊使用可可棕而不是黑色，柔和但對比仍足夠（10.2:1） |
+| 象牙紙頁 | 象牙白背景（不是純白），虛線與細線分隔 |
+| 可可色鋼筆 | 文字與描邊使用淺可可棕而不是黑色，柔和但仍達 AA（5.2:1） |
 | 明體標題 | 標題用 Noto Serif TC，帶出書卷、文青感 |
 | 貼紙描邊 | 卡片與主要按鈕使用 1.5px 可可色描邊，hover 時出現實心底影，像手帳上的貼紙 |
 | 紙膠帶 | 半透明粉彩色塊斜貼在照片角落，只作點綴 |
@@ -29,7 +29,7 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 ### 1.1.1 粉彩配色的關鍵限制
 粉彩色亮度高，**白字放在粉彩上幾乎都無法達到對比標準**。因此本設計的原則是：
 - 粉彩色只當**背景與色塊**；文字一律使用可可色（或深莓果色）。
-- 主要按鈕為「櫻花粉底＋可可色文字＋可可色描邊」，而不是常見的「彩色底＋白字」。
+- 主要按鈕為「淡天空藍底＋可可色文字＋可可色描邊」，而不是常見的「彩色底＋白字」。
 - 需要用顏色表達的文字（連結、警告、錯誤）使用同色系的**深色版本**。
 
 ### 1.2 設計原則
@@ -46,28 +46,36 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | Token | 色碼 | 用途 |
 | --- | --- | --- |
-| `--color-cream` | `#FFF8EF` | 頁面背景（奶油紙） |
-| `--color-surface` | `#FFFDF8` | 卡片、表單、Modal 背景 |
-| `--color-surface-sunken` | `#F7EDE0` | 次要區塊、表格表頭、Skeleton 底色 |
-| `--color-ink` | `#4A3B32` | 主要文字、標題、描邊（可可） |
-| `--color-ink-muted` | `#7A6658` | 次要文字、說明（拿鐵） |
-| `--color-ink-subtle` | `#7D6A5C` | 輔助資訊（時間戳記） |
-| `--color-line` | `#F0E2D3` | 分隔線、裝飾性邊框 |
-| `--color-line-dashed` | `#D9C3AE` | 票根打孔虛線、區塊虛線 |
-| `--color-line-strong` | `#9E8877` | 表單元件邊框（需達 3:1） |
-| `--color-sakura` | `#F2A7B8` | **品牌主色**：主要按鈕底色、重點色塊（文字用 ink） |
-| `--color-sakura-hover` | `#EC8FA5` | 主要按鈕 hover |
-| `--color-pink-100` | `#FDE4EA` | 選取狀態、已選標籤底色 |
-| `--color-rose` | `#A93D62` | 連結、選取框、Checkbox（莓果色，主色的深色版本） |
-| `--color-butter` | `#FFF1C9` | 票根底色、提示區塊 |
-| `--color-mint` | `#CDEBD9` | 開課者區塊、成功標籤底色、紙膠帶 |
-| `--color-sky` | `#CFE1F2` | 資訊區塊、Focus 光暈 |
-| `--color-lilac` | `#E5DAF3` | 次要裝飾 |
-| `--color-teal` | `#3E6B5C` | 頭像、需要白字的深色區塊 |
-| `--color-success` | `#3D7A5A` | 成功 |
-| `--color-warning` | `#8C5A0E` | 警告、名額緊張 |
-| `--color-danger` | `#C23B3B` | 錯誤、刪除 |
-| `--color-focus` | `#5B7DB1` | **鍵盤焦點框** |
+> **v0.3（求職者在設計稿上親自調整主色票後定稿）**：整體改為更輕盈的空氣感粉彩——象牙白底、淡天空藍主色、腮紅粉強調色、淺可可文字。狀態色與分類色票依此主色票統一調整。
+
+**主色票（求職者選定）**
+
+| Token | 色碼 | 用途 |
+| --- | --- | --- |
+| `--color-ivory` | `#FDFFF5` | 頁面背景（象牙紙） |
+| `--color-surface` | `#FFFFFF` | 卡片、表單、Modal 背景 |
+| `--color-ink` | `#7D685C` | 主要文字、標題、描邊（淺可可） |
+| `--color-latte` | `#DDC5B4` | 票根打孔虛線、裝飾（**不可作文字或表單邊框**） |
+| `--color-sky` | `#E6F8FF` | **品牌主色**：主要按鈕底色、資訊區塊、Focus 光暈 |
+| `--color-blush` | `#FFD2D2` | 強調色：收藏、紙膠帶、分類色塊、空狀態插圖 |
+| `--color-butter` | `#FDEEC4` | 票根底色、警告區塊底色 |
+| `--color-mint` | `#EAFBF1` | 開課者區塊、成功狀態底色 |
+
+**衍生色（為了可及性由主色票推導，文字與互動元件使用）**
+
+| Token | 色碼 | 由何而來 | 用途 |
+| --- | --- | --- | --- |
+| `--color-ink-muted` | `#84706A` | ink 略淡 | 次要文字 |
+| `--color-surface-sunken` | `#F7F2E8` | ivory 加暖 | Skeleton、次要區塊 |
+| `--color-line` | `#EFE6DC` | latte 淡化 | 分隔線、裝飾邊框 |
+| `--color-line-strong` | `#A08876` | latte 加深 | 輸入框、次要按鈕邊框（3:1） |
+| `--color-sky-hover` | `#DAF3FE` | sky 加深一階 | 主要按鈕 hover |
+| `--color-sky-deep` | `#2F6F96` | sky 的深色搭檔 | 焦點框、資訊文字、頭像底 |
+| `--color-blush-100` | `#FFEDED` | blush 淡化 | 選取狀態底色（已選標籤、已選場次） |
+| `--color-blush-deep` | `#A3404F` | blush 的深色搭檔 | 連結、選取框、Checkbox、收藏圖示 |
+| `--color-success` | `#3A7758` | 搭配 mint 底 | 成功文字 |
+| `--color-warning` | `#86590F` | 搭配 butter 底 | 警告、名額緊張 |
+| `--color-danger` | `#B83F3F` / 底 `#FFE3E3` | 腮紅色系加深 | 錯誤、刪除 |
 
 ### 2.2 對比度驗證（實際計算結果）
 
@@ -75,47 +83,57 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | 組合 | 對比 | 結果 |
 | --- | --- | --- |
-| ink / cream | 10.15 | ✅ AAA |
-| ink-muted / cream | 5.15 | ✅ AA |
-| ink-subtle / surface | 5.05 | ✅ AA |
-| ink / sakura（主要按鈕） | 5.60 | ✅ AA |
-| ink / sakura-hover | 4.61 | ✅ AA |
-| rose / cream（連結） | 5.64 | ✅ AA |
-| rose / pink-100（已選標籤） | 4.95 | ✅ AA |
-| warning / butter（票根上的「剩 3 位」） | 5.21 | ✅ AA |
-| danger / surface | 5.19 | ✅ AA |
-| 白字 / danger（刪除按鈕） | 5.27 | ✅ AA |
-| line-strong / surface（輸入框邊框） | 3.31 | ✅ UI 3:1 |
-| focus / cream（焦點框） | 3.97 | ✅ UI 3:1 |
+| ink / ivory | 5.19 | ✅ AA |
+| ink / surface | 5.24 | ✅ AA |
+| ink-muted / ivory | 4.61 | ✅ AA |
+| ink / sky（主要按鈕） | 4.80 | ✅ AA |
+| ink / sky-hover | 4.55 | ✅ AA |
+| ink / butter（票根文字） | 4.54 | ✅ AA |
+| ink / mint | 4.88 | ✅ AA |
+| ink / blush-100（已選場次） | 4.64 | ✅ AA |
+| blush-deep / ivory（連結） | 6.11 | ✅ AA |
+| blush-deep / blush | 4.53 | ✅ AA |
+| sky-deep / ivory（焦點框） | 5.42 | ✅ |
+| warning / butter（「剩 3 位」） | 5.28 | ✅ AA |
+| success / mint | 4.94 | ✅ AA |
+| danger / danger 底 | 4.54 | ✅ AA |
+| 白字 / danger（刪除按鈕） | 5.50 | ✅ AA |
+| line-strong / surface（輸入框邊框） | 3.35 | ✅ UI 3:1 |
 
-> 調整紀錄（實際計算後才發現的問題）：
-> - 初版 `rose #B4446A` 放在 pink-100 上只有 4.39 → 加深為 `#A93D62`。
-> - 初版 `line-strong #B39E8C` 只有 2.52，輸入框邊框看不清楚 → 加深為 `#9E8877`。
-> - 初版 `warning #9A6512` 放在奶油黃票根上只有 4.40 → 加深為 `#8C5A0E`。
-> - 白字放在櫻花粉上只有約 2:1，因此主要按鈕改用可可色文字。
+**未通過、因此規範禁止的組合**
+
+| 組合 | 對比 | 處理方式 |
+| --- | --- | --- |
+| latte `#DDC5B4` 當文字 | 1.65 | 只作裝飾，表單邊框改用 line-strong |
+| ink / blush（腮紅底上的可可字） | 3.84 | 腮紅底上的文字改用 blush-deep，或改用更淡的 blush-100 底 |
+| ink-muted / butter（票根上的月份） | 4.04 | 票根上一律使用 ink |
+| ink-muted / sunken | 4.18 | sunken 底上一律使用 ink |
+| ink / 初版 hover `#CDEEFC` | 4.30 | hover 改為 `#DAF3FE` 並加上貼紙底影 |
+
+> 設計取捨：主文字改為淺可可（5.2:1）後，主文字與次要文字的色差變小（4.6:1），層級改由**字級、字重與留白**區分，而不是靠顏色深淺。主要按鈕的天空藍與頁面底色非常接近，所以**可可色描邊是辨識按鈕的必要元素**，實作時不可省略。
 
 ### 2.3 分類代表色（粉彩色票）
 
-僅用於分類標籤的小色塊與插圖，**不作為文字色**；標籤文字仍使用 ink。色塊旁加 1px 可可色描邊，讓淺色色塊在奶油底上也看得出邊界。
+僅用於分類標籤的小色塊與插圖，**不作為文字色**；標籤文字仍使用 ink。色票與主色票落在同一亮度帶，並加 1px 可可色描邊，讓淺色色塊在象牙底上也看得出邊界。
 
 | 分類 | 色碼 | 名稱 |
 | --- | --- | --- |
-| ceramics 陶藝 | `#F2A7B8` | 櫻花 |
-| leathercraft 皮革 | `#E3C29B` | 焦糖拿鐵 |
-| floral 花藝 | `#D9C2EE` | 薰衣草 |
-| printmaking 版畫 | `#A9CBEB` | 天空藍 |
-| typography 字體 | `#4A3B32` | 可可墨 |
-| woodworking 木工 | `#F5D98A` | 奶油黃 |
-| textile 織品 | `#A8D8D0` | 湖水綠 |
-| illustration 插畫 | `#B9DFC0` | 薄荷 |
+| ceramics 陶藝 | `#FFD2D2` | 腮紅 |
+| leathercraft 皮革 | `#DDC5B4` | 拿鐵 |
+| floral 花藝 | `#E9DBF6` | 薰衣草 |
+| printmaking 版畫 | `#CDEBFA` | 天空藍 |
+| typography 字體 | `#7D685C` | 可可墨 |
+| woodworking 木工 | `#FBE2A0` | 奶油黃 |
+| textile 織品 | `#CFEFEA` | 湖水綠 |
+| illustration 插畫 | `#CFEFDA` | 薄荷 |
 
 ### 2.4 深色模式（P2，Token 先預留）
 
 | Token | 淺色 | 深色 |
 | --- | --- | --- |
-| cream | `#FFF8EF` | `#2A211C`（深可可） |
-| ink | `#4A3B32` | `#F7EDE0` |
-| 主色 | `#F2A7B8` | `#F2A7B8`（深底上維持粉彩，文字仍用深色） |
+| ivory | `#FDFFF5` | `#2A231F`（深可可） |
+| ink | `#7D685C` | `#F7F2E8` |
+| 主色 | `#E6F8FF` | `#E6F8FF`（深底上維持粉彩，文字仍用深色） |
 
 > 深色模式數值待 Phase 4 實作時再以腳本驗證對比度。
 
@@ -196,10 +214,10 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | Token | 值 | 用途 |
 | --- | --- | --- |
-| `shadow-sm` | `0 1px 2px rgb(74 59 50 / 0.06)` | 靜態卡片 |
-| `shadow-md` | `0 6px 16px rgb(74 59 50 / 0.08)` | Dropdown |
-| `shadow-lg` | `0 12px 32px rgb(74 59 50 / 0.18)` | Modal、Toast |
-| `shadow-sticker` | `0 4px 0 #F0E2D3` → hover `0 4px 0 #4A3B32` | 卡片、主要按鈕的貼紙感底影 |
+| `shadow-sm` | `0 1px 2px rgb(125 104 92 / 0.06)` | 靜態卡片 |
+| `shadow-md` | `0 6px 16px rgb(125 104 92 / 0.08)` | Dropdown |
+| `shadow-lg` | `0 12px 32px rgb(125 104 92 / 0.18)` | Modal、Toast |
+| `shadow-sticker` | `0 4px 0 #EFE6DC` → hover `0 4px 0 #7D685C` | 卡片、主要按鈕的貼紙感底影 |
 
 ### 4.4 Z-index 層級
 
@@ -231,7 +249,7 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | 變體 | 樣式 | 使用時機 |
 | --- | --- | --- |
-| `primary` | sakura 底、ink 字、1.5px ink 描邊、膠囊形 | 每個畫面最重要的一個行動（立即預約、送出） |
+| `primary` | sky 底、ink 字、1.5px ink 描邊、膠囊形 | 每個畫面最重要的一個行動（立即預約、送出） |
 | `secondary` | surface 底、ink 字、line-strong 描邊 | 次要行動（取消、返回） |
 | `ghost` | 透明底、ink 字 | 工具列、低強調行動 |
 | `danger` | danger 底、白字 | 刪除、取消預約（必定搭配確認 Modal） |
