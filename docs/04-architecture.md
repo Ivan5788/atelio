@@ -13,6 +13,8 @@
 | 圖表 | Chart.js（僅 Studio 頁面動態載入） | 4.6.x |
 | SEO | Nuxt 內建 `useSeoMeta` / `useHead` + 自建 JSON-LD composable | — |
 | 圖片 | `@nuxt/image` | — |
+| 字體 | `@nuxt/fonts`（自行託管 Noto Serif TC、IBM Plex Mono） | — |
+| 圖示 | Lucide（只引入使用到的 SVG 圖示） | — |
 | 後端 API | Nuxt Server Routes（Nitro），部署為 Vercel Functions | 隨 Nuxt |
 | 資料庫 | Upstash Redis（透過 Vercel Marketplace 整合） | `@upstash/redis` 1.41.x |
 | 輸入驗證 | Zod（前後端共用 schema） | 4.x |
