@@ -39,6 +39,7 @@ import {
   type WorkshopSeed,
 } from '../data/workshops'
 import { articles } from '../data/articles'
+import { workshopImageFor } from '#shared/data/workshop-images'
 
 export type UserBookedSeats = ReadonlyMap<string, number>
 const EMPTY: UserBookedSeats = new Map()
@@ -100,6 +101,7 @@ export function buildWorkshop(
     durationMinutes: seed.durationMinutes,
     price: seed.price,
     rating: seed.rating,
+    image: workshopImageFor(seed.id),
     nextSession: sessions.find((s) => s.seatsLeft > 0) ?? null,
     createdAt: seed.createdAt,
     updatedAt: seed.updatedAt,
@@ -138,6 +140,7 @@ export function toSummary(workshop: Workshop): WorkshopSummary {
     durationMinutes: workshop.durationMinutes,
     price: workshop.price,
     rating: workshop.rating,
+    image: workshop.image,
     nextSession: workshop.nextSession,
     createdAt: workshop.createdAt,
   }

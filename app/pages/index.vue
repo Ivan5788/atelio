@@ -7,6 +7,7 @@
 import { catalogService } from '~/services/catalog.service'
 import { CITY_SLUGS } from '#shared/types/domain'
 import { CITY_NAMES } from '~/utils/labels'
+import { workshopImageFor } from '#shared/data/workshop-images'
 
 useSeoMeta({
   title: '探索並預約設計與手作工作坊',
@@ -33,6 +34,9 @@ function onSearch() {
     query: { q: keyword.value.trim() || undefined, city: city.value || undefined },
   })
 }
+
+// 首頁主視覺：拉坯、皮革工具、花束三張示意照片
+const heroImages = ['w03', 'w05', 'w08'].map((id) => workshopImageFor(id))
 
 const steps = [
   {
@@ -85,10 +89,30 @@ const steps = [
       </div>
       <div class="hero__art" aria-hidden="true">
         <div class="hero__tile hero__tile--tall">
-          <WorkshopCover category="ceramics" size="hero" />
+          <WorkshopPhoto
+            :image="heroImages[0] ?? null"
+            category="ceramics"
+            sizes="(min-width: 1024px) 280px, 50vw"
+            priority
+            decorative
+          />
         </div>
-        <div class="hero__tile"><WorkshopCover category="leathercraft" /></div>
-        <div class="hero__tile"><WorkshopCover category="floral" /></div>
+        <div class="hero__tile">
+          <WorkshopPhoto
+            :image="heroImages[1] ?? null"
+            category="leathercraft"
+            sizes="(min-width: 1024px) 280px, 50vw"
+            decorative
+          />
+        </div>
+        <div class="hero__tile">
+          <WorkshopPhoto
+            :image="heroImages[2] ?? null"
+            category="floral"
+            sizes="(min-width: 1024px) 280px, 50vw"
+            decorative
+          />
+        </div>
       </div>
     </section>
 

@@ -2,11 +2,15 @@
 /**
  * 關於 Atelio（F-09），Prerender：產品理念、作品聲明（示範資料）、技術說明。
  */
+import { workshopImages } from '#shared/data/workshop-images'
+
 useSeoMeta({
   title: '關於 Atelio',
   description:
     'Atelio 是一個求職作品：探索、比較並預約設計與手作工作坊的平台。網站上的課程與講師皆為虛構示範資料。',
 })
+
+const credits = Object.entries(workshopImages).map(([id, credit]) => ({ id, ...credit }))
 
 const stack = [
   {
@@ -64,10 +68,58 @@ const stack = [
         >查看，所有對比數值都由程式即時計算。
       </p>
     </section>
+
+    <section class="about-section" aria-labelledby="about-credits">
+      <h2 id="about-credits">圖片來源</h2>
+      <p>
+        工作坊照片皆透過
+        <a href="https://openverse.org" rel="noopener" target="_blank">Openverse</a> 搜尋，只使用
+        CC0
+        或公眾領域授權的圖片（不需標註、可修改、可商用）。照片僅用來示意課程類型，與網站上虛構的工作坊和講師無關。
+      </p>
+      <details class="credits">
+        <summary>查看全部 {{ credits.length }} 張圖片的來源</summary>
+        <ul class="credits__list">
+          <li v-for="credit in credits" :key="credit.id">
+            <a :href="credit.url" rel="noopener" target="_blank">{{ credit.title }}</a>
+            <span class="credits__meta">
+              {{ credit.creator ? `${credit.creator}・` : '' }}{{ credit.source }}・{{
+                credit.license === 'cc0' ? 'CC0' : '公眾領域'
+              }}
+            </span>
+          </li>
+        </ul>
+      </details>
+    </section>
   </ContentPage>
 </template>
 
 <style scoped lang="scss">
+.credits {
+  font-size: rem(15px);
+
+  summary {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    color: color('text-link');
+    cursor: pointer;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: space(2);
+    margin-top: space(3);
+  }
+
+  &__meta {
+    margin-left: space(2);
+    color: color('text-muted');
+    font-size: rem(13px);
+  }
+}
+
 .about-section {
   display: flex;
   flex-direction: column;

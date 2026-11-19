@@ -100,6 +100,12 @@ export interface FaqItem {
 
 export type WorkshopStatus = 'published' | 'draft'
 
+export interface WorkshopImage {
+  src: string
+  srcset: string
+  alt: string
+}
+
 /** 列表用的精簡資料，避免列表頁下載完整內容 */
 export interface WorkshopSummary {
   id: string
@@ -114,6 +120,8 @@ export interface WorkshopSummary {
   durationMinutes: number
   price: number
   rating: { average: number; count: number }
+  /** 示意照片；沒有照片時為 null，前端改用插畫封面 */
+  image: WorkshopImage | null
   /** 最近一個還有名額的場次；沒有則為 null */
   nextSession: WorkshopSession | null
   createdAt: string

@@ -152,3 +152,21 @@ describe('detail and search', () => {
     expect(result.articles.length).toBeGreaterThan(0)
   })
 })
+
+describe('workshop photos', () => {
+  it('每堂示範工作坊都有照片，640／1280 兩種尺寸的檔案都存在，且有替代文字', async () => {
+    const { existsSync } = await import('node:fs')
+    const { workshopImages } = await import('#shared/data/workshop-images')
+    for (const w of allWorkshops(NOW)) {
+      expect(w.image, w.id).not.toBeNull()
+      expect(w.image!.alt.length, w.id).toBeGreaterThan(4)
+      for (const width of [640, 1280]) {
+        expect(
+          existsSync(`public/images/workshops/${w.id}-${width}.webp`),
+          `${w.id}-${width}`,
+        ).toBe(true)
+      }
+      expect(['cc0', 'pdm']).toContain(workshopImages[w.id]!.license)
+    }
+  })
+})

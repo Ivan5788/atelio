@@ -113,15 +113,11 @@ const resultsRef = ref<HTMLElement>()
           maxlength="50"
         />
       </div>
-      <p class="toolbar__count" role="status">
-        <template v-if="data"
-          >共 <strong>{{ data.total }}</strong> 堂工作坊</template
-        >
-      </p>
       <BaseSelect
         :model-value="filters.sort"
         label="排序"
         :options="sortOptions"
+        inline
         class="toolbar__sort"
         @update:model-value="(value) => update({ sort: value as WorkshopFilters['sort'] })"
       />
@@ -160,19 +156,27 @@ const resultsRef = ref<HTMLElement>()
       >
         <div v-if="status === 'pending'" class="progress" aria-hidden="true" />
 
-        <div v-if="chips.length" class="chips">
-          <span class="chips__label">已選：</span>
-          <button
-            v-for="chip in chips"
-            :key="chip.label"
-            type="button"
-            class="chips__chip"
-            :aria-label="`移除條件：${chip.label}`"
-            @click="update(chip.patch)"
-          >
-            {{ chip.label }}
-            <IconX :size="14" aria-hidden="true" />
-          </button>
+        <div class="results-bar">
+          <div v-if="chips.length" class="chips">
+            <span class="chips__label">已選：</span>
+            <button
+              v-for="chip in chips"
+              :key="chip.label"
+              type="button"
+              class="chips__chip"
+              :aria-label="`移除條件：${chip.label}`"
+              @click="update(chip.patch)"
+            >
+              {{ chip.label }}
+              <IconX :size="14" aria-hidden="true" />
+            </button>
+          </div>
+          <!-- 結果數量放在結果區右上角；role=status 讓篩選後的新數量被螢幕閱讀器讀出 -->
+          <p class="results-bar__count" role="status">
+            <template v-if="data"
+              >共 <strong>{{ data.total }}</strong> 堂工作坊</template
+            >
+          </p>
         </div>
 
         <BaseEmptyState
@@ -261,7 +265,7 @@ const resultsRef = ref<HTMLElement>()
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: space(3) space(4);
 
   &__search {
@@ -276,16 +280,6 @@ const resultsRef = ref<HTMLElement>()
     border-radius: radius('md');
     background: color('bg-surface');
     font-size: rem(16px);
-  }
-
-  &__count {
-    align-self: center;
-    color: color('text-muted');
-
-    strong {
-      font-family: var(--font-mono);
-      color: color('text-default');
-    }
   }
 
   &__sort {
@@ -307,6 +301,25 @@ const resultsRef = ref<HTMLElement>()
 
     @include bp(lg) {
       display: none;
+    }
+  }
+}
+
+.results-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: space(3);
+
+  &__count {
+    margin-left: auto;
+    color: color('text-muted');
+    white-space: nowrap;
+
+    strong {
+      font-family: var(--font-mono);
+      color: color('text-default');
     }
   }
 }

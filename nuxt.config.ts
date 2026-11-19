@@ -5,6 +5,14 @@
 
 import { articles } from './server/data/articles'
 
+// 快取一小時的公開頁面：Vercel 上用 ISR（快取在 CDN，所有實例共用）；
+// 其他環境（本機預覽、CI 的 E2E）用 Nitro 的 SWR。
+// 原因：node 環境不支援 ISR 規則，但前端仍會依規則預先載入 _payload.json，
+// 伺服器卻不產生，每頁都會出現 404（本機實測）。改用 SWR 後兩邊行為一致。
+const isVercel =
+  Boolean(process.env.VERCEL) || Boolean(process.env.NITRO_PRESET?.startsWith('vercel'))
+const cachedPage = isVercel ? { isr: 3600 } : { swr: 3600 }
+
 const noindex = { 'X-Robots-Tag': 'noindex, nofollow' }
 
 // Upstash 環境變數存在時（Vercel 正式／預覽環境）使用 Redis；
@@ -84,7 +92,10 @@ export default defineNuxtConfig({
   routeRules: {
     // 首頁有「近期場次」，場次日期依當下時間計算；prerender 會凍結在建置當天，
     // 所以改用 ISR，每小時重新產生一次。
-    '/': { isr: 3600 },
+    '/': cachedPage,
+    // 首頁的 payload 路徑是 /_payload.json，'/' 規則比對不到（其他頁面由 /xxx/** 萬用規則涵蓋）。
+    // Nuxt 只會為 isr 規則自動補上這條，SWR 不會，所以明確寫出（本機實測：未加時回 404）。
+    '/_payload.json': cachedPage,
     '/faq': { prerender: true },
     '/about': { prerender: true },
     '/for-organizers': { prerender: true },
@@ -92,13 +103,13 @@ export default defineNuxtConfig({
     '/instructors': { prerender: true },
 
     // Vercel ISR：第一次請求時渲染，之後 CDN 快取 1 小時
-    '/workshops/**': { isr: 3600 },
-    '/categories/**': { isr: 3600 },
-    '/cities/**': { isr: 3600 },
-    '/instructors/**': { isr: 3600 },
+    '/workshops/**': cachedPage,
+    '/categories/**': cachedPage,
+    '/cities/**': cachedPage,
+    '/instructors/**': cachedPage,
     // 列表本身明確關閉 ISR：上面的 /workshops/** 也會比對到 /workshops，
     // 但 ISR 會忽略 query string，篩選條件會失效，所以列表維持每次請求 SSR。
-    '/workshops': { isr: false },
+    '/workshops': { isr: false, swr: false },
 
     // 私人頁面：只在瀏覽器渲染，不讓搜尋引擎索引
     '/booking/**': { ssr: false, headers: noindex },

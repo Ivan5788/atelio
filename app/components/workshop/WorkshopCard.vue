@@ -25,7 +25,8 @@ const seats = computed(() =>
 <template>
   <article class="card">
     <div class="card__cover">
-      <WorkshopCover :category="workshop.category" />
+      <!-- 卡片的照片是示意用，旁邊的標題已說明內容，所以設為裝飾圖（alt=""） -->
+      <WorkshopPhoto :image="workshop.image" :category="workshop.category" decorative />
       <FavoriteButton :slug="workshop.slug" :title="workshop.title" class="card__favorite" />
     </div>
     <div class="card__body">

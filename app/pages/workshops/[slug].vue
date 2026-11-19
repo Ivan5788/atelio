@@ -76,7 +76,12 @@ async function share() {
 
     <div class="detail__gallery">
       <div class="detail__cover detail__cover--main">
-        <WorkshopCover :category="workshop.category" size="hero" />
+        <WorkshopPhoto
+          :image="workshop.image"
+          :category="workshop.category"
+          sizes="(min-width: 768px) 66vw, 100vw"
+          priority
+        />
       </div>
       <div class="detail__cover"><WorkshopCover :category="workshop.category" /></div>
     </div>

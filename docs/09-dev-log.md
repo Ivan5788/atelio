@@ -94,3 +94,12 @@
 - 本機 node 預覽環境下，首頁 `/_payload.json` 預載回 404：node preset 不支援 ISR 規則；Vercel preset 的產出有對應的 ISR 函式，需部署後確認（Phase 7）。
 - 結構化資料（JSON-LD）、sitemap.xml、robots.txt、llms.txt（Phase 5）。
 - Lighthouse 與無障礙稽核、CSP 實測、`npm audit`（Phase 6）。
+
+### Phase 4 追加調整（依求職者回饋）
+| 項目 | 做法 |
+| --- | --- |
+| 站內照片 | Unsplash、Pexels 擋自動下載（401／403），改用 Openverse API，只篩選 CC0／公眾領域圖片。每個分類搜尋多組關鍵字並拼成縮圖總表，逐張人工檢視後挑選 24 張，裁成 16:10，輸出 640／1280 兩種寬度的 WebP（共 3.3 MB，卡片只載入 640 版本）。來源記錄在 `shared/data/workshop-images.ts` 並列在「關於」頁；單元測試檢查每堂工作坊都有圖片與替代文字。Studio 自建的工作坊沒有照片時，仍使用插畫封面 |
+| 回到頂部按鈕 | 捲動超過 1.5 個畫面高度才出現；尊重減少動態設定；鍵盤操作時焦點移回頁首；手機詳細頁會避開底部預約列，Toast 也往上移以免重疊 |
+| 列表頁版面 | 結果數量移到結果區右上角（保留 `role="status"`，篩選後會被朗讀）；排序標籤與選單同一列（`BaseSelect` 新增 `inline`） |
+| Console 錯誤 `A listener indicated an asynchronous response…` | 這是瀏覽器擴充功能的訊息傳遞錯誤，專案程式碼沒有使用 `chrome.runtime`；以沒有擴充功能的 Playwright 瀏覽器開啟 Studio，沒有出現此錯誤 |
+| **本機每頁出現 `/_payload.json` 404** | node 環境不支援 ISR 規則，但前端仍依規則預載 payload。改為 Vercel 上用 ISR、其他環境用 SWR；並明確加上 `/_payload.json` 規則（Nuxt 只會為 ISR 自動補上）。修正後桌機與手機所有檢查頁面 console 0 錯誤；Vercel preset 建置仍產生 6 個 ISR 設定 |

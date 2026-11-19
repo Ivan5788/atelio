@@ -11,6 +11,8 @@ const props = defineProps<{
   hideLabel?: boolean
   required?: boolean
   placeholder?: string
+  /** 標籤與選單同一列（工具列用） */
+  inline?: boolean
 }>()
 
 const model = defineModel<T | ''>({ default: '' })
@@ -20,7 +22,10 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
 </script>
 
 <template>
-  <div class="select-field" :class="{ 'select-field--error': error }">
+  <div
+    class="select-field"
+    :class="{ 'select-field--error': error, 'select-field--inline': inline }"
+  >
     <label :for="id" class="select-field__label" :class="{ 'visually-hidden': hideLabel }">
       {{ label }}<span v-if="required" class="select-field__required" aria-hidden="true">＊</span>
     </label>
@@ -75,6 +80,19 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
 
     &:hover {
       border-color: color('border-ink');
+    }
+  }
+
+  &--inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: space(2);
+
+    .select-field__label {
+      font-weight: 400;
+      color: color('text-muted');
+      white-space: nowrap;
     }
   }
 

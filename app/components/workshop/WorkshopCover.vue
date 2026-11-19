@@ -1,10 +1,8 @@
 <script setup lang="ts">
 /**
- * 工作坊封面：以分類色與線條圖示組成的插畫式封面。
- *
- * 為什麼不用照片：示範資料是虛構的，用真實照片容易讓人誤以為是真的課程，
- * 也有授權問題。插畫式封面不需要下載圖片（有利 LCP），而且同一分類視覺一致。
- * 正式產品串接開課者上傳的照片時，可改用 <NuxtImg> 並保留同樣的長寬比避免 CLS。
+ * 插畫式封面：分類色＋線條圖示。
+ * 用在沒有照片的地方（Studio 自建的工作坊、詳細頁的第二格），
+ * 不需要下載圖片，同一分類的視覺也一致。
  */
 import type { Component } from 'vue'
 import { Amphora, Feather, Flower2, Hammer, Palette, Shirt, Stamp, Wallet } from 'lucide-vue-next'

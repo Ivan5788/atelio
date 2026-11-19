@@ -103,7 +103,8 @@ const alertItems = computed(() => items.value.filter((t) => t.tone === 'error'))
 <style scoped lang="scss">
 .toasts {
   position: fixed;
-  inset: auto space(4) space(4) space(4);
+  // 底部預留回到頂部按鈕（48px）的空間，兩者不重疊
+  inset: auto space(4) calc(#{space(4)} + 64px) space(4);
   z-index: z('toast');
   display: flex;
   flex-direction: column;
@@ -112,7 +113,7 @@ const alertItems = computed(() => items.value.filter((t) => t.tone === 'error'))
   pointer-events: none;
 
   @include bp(md) {
-    inset: auto space(6) space(6) auto;
+    inset: auto space(6) calc(#{space(6)} + 64px) auto;
     align-items: flex-end;
   }
 
