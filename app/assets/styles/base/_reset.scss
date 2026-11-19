@@ -47,8 +47,11 @@ h4 {
   overflow-wrap: break-word;
 }
 
-ul[role='list'],
-ol[role='list'] {
+// 有 class 的清單是元件版面（導覽、卡片格線），移除預設符號與縮排；
+// 沒有 class 的清單是內文，保留瀏覽器預設樣式。
+ul[class],
+ol[class] {
   list-style: none;
+  margin: 0;
   padding: 0;
 }

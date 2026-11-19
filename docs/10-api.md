@@ -10,7 +10,7 @@
 | 格式 | 請求與回應皆為 JSON。會改變資料的請求必須帶 `Content-Type: application/json`，否則回 415 |
 | 來源檢查 | POST／PUT／PATCH／DELETE 必須帶與站台相同的 `Origin`，否則回 403（CSRF 防護） |
 | 大小上限 | 請求 body 上限 100 KB，超過回 413 |
-| 速率限制 | 登入／註冊／Demo：每 IP 每 10 分鐘 10 次；其他：每 IP 每分鐘 60 次。超過回 429 並附 `Retry-After` |
+| 速率限制 | 登入／註冊／Demo：每 IP 每 10 分鐘 10 次；`/api/me/**`、`/api/studio/**`、`/api/workshops/:slug/sessions`：每 IP 每分鐘 60 次。只讀 seed 資料的公開 API 不限流。超過回 429 並附 `Retry-After` |
 | 快取 | `/api/**` 一律 `Cache-Control: no-store`、`X-Robots-Tag: noindex` |
 | 登入 | 加密的 `httpOnly` Session Cookie（`nuxt-auth-session`），72 小時到期 |
 

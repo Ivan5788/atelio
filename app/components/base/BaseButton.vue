@@ -47,6 +47,7 @@ function onClick(event: MouseEvent) {
     :to="to"
     class="base-button"
     :class="[`base-button--${variant}`, `base-button--${size}`, { 'base-button--block': block }]"
+    @click="onClick"
   >
     <slot />
   </NuxtLink>
@@ -98,6 +99,13 @@ function onClick(event: MouseEvent) {
 
   &--block {
     width: 100%;
+  }
+
+  // 圖示與文字並排（reset 把 svg 設成 block，不包一層 flex 會換行）
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: space(2);
   }
 
   // ── 尺寸 ────────────────────────────────────────────

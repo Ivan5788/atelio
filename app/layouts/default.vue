@@ -1,13 +1,21 @@
 <script setup lang="ts">
-// Phase 3 只放版面骨架；Header、Footer、Demo 提示列於 Phase 4 實作。
+/**
+ * 預設版面：跳到主要內容 → 作品聲明 → 導覽列 → 內容 → 頁尾。
+ * Toast 與登入提示是全站共用的浮層，放在版面最後。
+ */
 </script>
 
 <template>
   <div class="layout">
     <a class="skip-link" href="#main">跳到主要內容</a>
+    <AppDemoBanner />
+    <AppHeader />
     <main id="main" class="layout__main" tabindex="-1">
       <slot />
     </main>
+    <AppFooter />
+    <BaseToastRegion />
+    <AppLoginPrompt />
   </div>
 </template>
 

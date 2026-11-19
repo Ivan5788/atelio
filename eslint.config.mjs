@@ -7,13 +7,14 @@ export default withNuxt(
     rules: {
       // 防止 XSS：禁止 v-html（docs/05-security.md C-04）
       'vue/no-v-html': 'error',
-      'vue/multi-word-component-names': [
-        'error',
-        { ignores: ['index', 'default', 'error', 'styleguide'] },
-      ],
       'vue/require-default-prop': 'off',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
+  },
+  {
+    // 頁面與版面的檔名就是路由（[slug]、search），不需要多字命名；一般元件仍需遵守
+    files: ['app/pages/**/*.vue', 'app/layouts/**/*.vue', 'app/error.vue', 'app/app.vue'],
+    rules: { 'vue/multi-word-component-names': 'off' },
   },
   {
     // 分層規則：前端不得 import server 端程式（docs/04-architecture.md 規則 6）

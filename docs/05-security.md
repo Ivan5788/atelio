@@ -50,7 +50,7 @@
 | C-02 | 所有 API 輸入以 Zod 驗證（body、query、route params） | `shared/schemas/*`、各 handler | 單元測試：傳入非法資料應回 400 |
 | C-03 | 授權檢查：`requireUserSession` + 資源擁有者比對 | `server/services/*` | E2E：使用者 A 存取 B 的預約應回 404 |
 | C-04 | 前端路由守衛（只提升使用者體驗） | `app/middleware/auth.ts` | E2E |
-| C-05 | 速率限制：一般 API 每 IP 每分鐘 60 次；登入／註冊每 IP 每 10 分鐘 10 次 | `server/middleware/02.rate-limit.ts`、`server/utils/rate-limit.ts`（`@upstash/ratelimit`） | 測試腳本連續請求應回 429 |
+| C-05 | 速率限制：會讀寫資料庫的 API（`/api/me`、`/api/studio`、個人化名額）每 IP 每分鐘 60 次；登入／註冊／Demo 每 IP 每 10 分鐘 10 次。只讀 seed 的公開 API 不限流（不耗資料庫額度，且 SSR 內部呼叫量大，見 middleware 註解） | `server/middleware/02.rate-limit.ts`、`server/utils/rate-limit.ts`（`@upstash/ratelimit`） | 測試腳本連續請求應回 429 |
 | C-06 | 請求大小上限（100 KB）、`pageSize` 上限 50、字串長度上限 | `nuxt-security` 設定 + `server/middleware/01.api-guard.ts`（補上 PATCH）+ Zod schema | 單元測試 |
 | C-07 | 禁止 `v-html`（ESLint `vue/no-v-html: error`）；文章 Markdown 在建置時轉為 HTML，內容來源只有 repo 本身 | `eslint.config.mjs` | CI lint |
 | C-08 | 安全標頭：CSP（SSR 使用 nonce）、`X-Content-Type-Options`、`Referrer-Policy`、`Permissions-Policy`、`frame-ancestors 'none'`；HSTS 由 Vercel 提供 | `nuxt-security` | securityheaders.com 掃描並存檔結果 |

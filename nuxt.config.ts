@@ -37,7 +37,15 @@ export default defineNuxtConfig({
 
   css: ['~/assets/styles/main.scss'],
 
+  // 元件名稱直接使用檔名（AppHeader、WorkshopCard），不加資料夾前綴；
+  // 檔名本身已帶有分類（Base／App／Workshop…），搜尋程式碼時名稱與檔名一致。
+  components: [{ path: '~/components', pathPrefix: false }],
+
   vite: {
+    // 開發模式預先打包，避免第一次載入頁面時才發現依賴而整頁重新載入
+    optimizeDeps: {
+      include: ['lucide-vue-next', 'zod'],
+    },
     css: {
       preprocessorOptions: {
         scss: {
