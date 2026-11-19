@@ -21,7 +21,7 @@
 
 ### 2.1 要保護的資產
 
-1. **機密**：`NUXT_SESSION_PASSWORD`（Session 加密金鑰）、Upstash Redis 連線 Token、Vercel／GitHub 帳號。
+1. **機密**：`NUXT_APP_SECRET`（Session 加密金鑰）、Upstash Redis 連線 Token、Vercel／GitHub 帳號。
 2. **使用者資料**：示範帳號的 Email、雜湊後的密碼、預約與收藏（雖然是示範資料，仍以真實資料的標準保護）。
 3. **服務可用性**：避免免費額度被惡意請求耗盡，導致面試官打不開網站。
 4. **網站完整性**：避免頁面被竄改、植入惡意腳本。
@@ -50,14 +50,14 @@
 | C-02 | 所有 API 輸入以 Zod 驗證（body、query、route params） | `shared/schemas/*`、各 handler | 單元測試：傳入非法資料應回 400 |
 | C-03 | 授權檢查：`requireUserSession` + 資源擁有者比對 | `server/services/*` | E2E：使用者 A 存取 B 的預約應回 404 |
 | C-04 | 前端路由守衛（只提升使用者體驗） | `app/middleware/auth.ts` | E2E |
-| C-05 | 速率限制：一般 API 每 IP 每分鐘 60 次；登入／註冊每 IP 每 10 分鐘 10 次 | `server/middleware/rate-limit.ts`（`@upstash/ratelimit`） | 測試腳本連續請求應回 429 |
-| C-06 | 請求大小上限（100 KB）、`pageSize` 上限 50、字串長度上限 | `nuxt-security` 設定 + Zod schema | 單元測試 |
+| C-05 | 速率限制：一般 API 每 IP 每分鐘 60 次；登入／註冊每 IP 每 10 分鐘 10 次 | `server/middleware/02.rate-limit.ts`、`server/utils/rate-limit.ts`（`@upstash/ratelimit`） | 測試腳本連續請求應回 429 |
+| C-06 | 請求大小上限（100 KB）、`pageSize` 上限 50、字串長度上限 | `nuxt-security` 設定 + `server/middleware/01.api-guard.ts`（補上 PATCH）+ Zod schema | 單元測試 |
 | C-07 | 禁止 `v-html`（ESLint `vue/no-v-html: error`）；文章 Markdown 在建置時轉為 HTML，內容來源只有 repo 本身 | `eslint.config.mjs` | CI lint |
 | C-08 | 安全標頭：CSP（SSR 使用 nonce）、`X-Content-Type-Options`、`Referrer-Policy`、`Permissions-Policy`、`frame-ancestors 'none'`；HSTS 由 Vercel 提供 | `nuxt-security` | securityheaders.com 掃描並存檔結果 |
 | C-08a | ⚠️ 待驗證：Prerender／ISR 頁面的 HTML 被 CDN 快取後，nonce 會固定不變，失去 nonce 的意義。這類頁面改用 script hash 型 CSP（`nuxt-security` 的 SSG 模式），Phase 5 實測後記錄最終做法。 | `nuxt.config.ts` | 檢查快取頁面的 CSP header |
 | C-09 | 正式環境錯誤回應只包含 `statusCode` 與使用者訊息，不含 stack | `server/utils/error.ts` | 手動測試正式環境 |
 | C-10 | 機密只放 `runtimeConfig`（非 public），由環境變數注入 | `nuxt.config.ts` | 建置後搜尋 `.output/public` 不應出現機密字串 |
-| C-11 | POST/PATCH/PUT/DELETE 檢查 `Origin` 與站台網域相同；只接受 `application/json` | `server/middleware/origin-check.ts` | 單元測試 |
+| C-11 | POST/PATCH/PUT/DELETE 檢查 `Origin` 與站台網域相同；只接受 `application/json` | `server/middleware/01.api-guard.ts` | 單元測試 |
 | C-12 | 結構化 log：記錄操作類型、使用者 id、時間；不記錄密碼、Token、完整 Email | `server/utils/logger.ts` | Code review |
 | C-13 | 供應鏈：`package-lock.json` 進版控、CI 使用 `npm ci`、`npm audit --audit-level=high`、啟用 Dependabot | `.github/` | CI 結果 |
 | C-14 | 密碼規則：至少 8 字元，含英文字母與數字；scrypt 雜湊；登入失敗訊息不透露帳號是否存在 | `shared/schemas/auth.ts` | 單元測試 |
@@ -77,7 +77,7 @@
 
 | 環境變數 | 用途 | 是否機密 |
 | --- | --- | --- |
-| `NUXT_SESSION_PASSWORD` | Session 加密金鑰（≥ 32 字元隨機字串） | ✅ |
+| `NUXT_APP_SECRET` | Nuxt appSecret，nuxt-auth-utils 0.6 由它衍生 Session 加密金鑰（`openssl rand -base64 32`） | ✅ |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Redis 連線（Vercel Marketplace 整合會自動注入） | ✅ |
 | `NUXT_PUBLIC_SITE_URL` | 正式網址（canonical、sitemap 使用） | ❌ |
 

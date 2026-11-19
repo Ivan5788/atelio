@@ -23,5 +23,12 @@ export default defineConfig({
     url: `http://localhost:${PORT}/api/health`,
     timeout: 240_000,
     reuseExistingServer: !process.env.CI,
+    env: {
+      // 正式版建置不會自動產生 Session 加密金鑰；本機測試用固定的假值，CI 由 workflow 傳入隨機值
+      NUXT_APP_SECRET: process.env.NUXT_APP_SECRET ?? 'e2e-only-secret-not-used-in-production-000',
+      // 所有測試都從同一個 IP 登入，調高上限避免互相觸發限流；正式環境使用預設值
+      NUXT_RATE_LIMIT_AUTH_MAX: '1000',
+      NUXT_RATE_LIMIT_API_MAX: '10000',
+    },
   },
 })

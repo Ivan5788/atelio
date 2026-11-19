@@ -52,14 +52,29 @@ export default defineNuxtConfig({
   // 機密只放在私有 runtimeConfig；只有 public 區塊會送到瀏覽器。
   // 實際值由環境變數覆寫：NUXT_PUBLIC_SITE_URL 等。
   runtimeConfig: {
+    // Session Cookie 與示範帳號同樣 72 小時到期（docs/05-security.md C-01）
+    session: {
+      maxAge: 60 * 60 * 72,
+    },
+    rateLimit: {
+      authMax: 10,
+      apiMax: 60,
+    },
     public: {
       siteUrl: 'http://localhost:3000',
     },
   },
 
+  auth: {
+    // 只在瀏覽器端讀取登入狀態：工作坊頁面會被 ISR 快取給所有人，
+    // 如果在伺服器渲染時就把「某人已登入」寫進 HTML，下一位訪客可能看到別人的名字。
+    loadStrategy: 'client-only',
+  },
+
   routeRules: {
-    // 建置時產生靜態 HTML
-    '/': { prerender: true },
+    // 首頁有「近期場次」，場次日期依當下時間計算；prerender 會凍結在建置當天，
+    // 所以改用 ISR，每小時重新產生一次。
+    '/': { isr: 3600 },
     // 以下頁面在 Phase 4 完成後取消註解；路徑寫進 prerender 但頁面不存在時，建置會失敗。
     // '/faq': { prerender: true },
     // '/about': { prerender: true },
@@ -72,8 +87,9 @@ export default defineNuxtConfig({
     '/categories/**': { isr: 3600 },
     '/cities/**': { isr: 3600 },
     '/instructors/**': { isr: 3600 },
-    // '/workshops'（列表本身）刻意不設定：ISR 會忽略 query string，
-    // 篩選條件會失效，所以列表維持每次請求 SSR。
+    // 列表本身明確關閉 ISR：上面的 /workshops/** 也會比對到 /workshops，
+    // 但 ISR 會忽略 query string，篩選條件會失效，所以列表維持每次請求 SSR。
+    '/workshops': { isr: false },
 
     // 私人頁面：只在瀏覽器渲染，不讓搜尋引擎索引
     '/booking/**': { ssr: false, headers: noindex },
@@ -131,6 +147,11 @@ export default defineNuxtConfig({
     // nuxt-security 內建的限流使用記憶體，Serverless 上每個實例各算各的，
     // 等於沒有限流；改在 server/middleware 使用 @upstash/ratelimit（Phase 4）。
     rateLimiter: false,
+    // 請求大小上限 100 KB（C-06）。注意這個設定不檢查 PATCH，server/middleware/01.api-guard.ts 補上。
+    requestSizeLimiter: {
+      maxRequestSizeInBytes: 100_000,
+      maxUploadFileRequestInBytes: 100_000,
+    },
     // 建置警告顯示目前的 Vite 使用 oxc、會忽略 esbuild 的 drop 設定，nuxt-security 移除 console 的功能因此不生效；
     // 關閉以免誤以為有作用；正式環境的 console 由 ESLint no-console 規則把關。
     removeLoggers: false,

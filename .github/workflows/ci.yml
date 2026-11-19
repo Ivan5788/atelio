@@ -45,7 +45,7 @@ jobs:
       - run: npm run test:e2e
         env:
           # CI 只用來測試，金鑰每次隨機產生，不使用正式環境的值
-          NUXT_SESSION_PASSWORD: ci-only-${{ github.run_id }}-${{ github.run_attempt }}-padding-to-32-chars
+          NUXT_APP_SECRET: ci-only-${{ github.run_id }}-${{ github.run_attempt }}-padding-to-32-chars
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
