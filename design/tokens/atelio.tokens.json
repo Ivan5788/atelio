@@ -1,0 +1,147 @@
+{
+  "$description": "Atelio design tokens v0.3.2 (W3C Design Tokens Community Group format). Source of truth for Figma Variables and app/assets/styles/tokens.",
+  "primitive": {
+    "$description": "Raw palette. Do not use directly in components; reference via semantic tokens.",
+    "color": {
+      "$type": "color",
+      "ivory": { "$value": "#FDFFF5" },
+      "white": { "$value": "#FFFFFF" },
+      "cocoa-900": { "$value": "#5D493E", "$description": "ink" },
+      "cocoa-700": { "$value": "#78645D", "$description": "ink-muted" },
+      "cocoa-500": { "$value": "#A08876", "$description": "line-strong" },
+      "latte": { "$value": "#DDC5B4" },
+      "latte-100": { "$value": "#EFE6DC" },
+      "paper-200": { "$value": "#F7F2E8" },
+      "sky": { "$value": "#E6F8FF" },
+      "sky-200": { "$value": "#DAF3FE" },
+      "sky-800": { "$value": "#2F6F96" },
+      "blush": { "$value": "#FFD2D2" },
+      "blush-100": { "$value": "#FFEDED" },
+      "blush-800": { "$value": "#A3404F" },
+      "blush-900": { "$value": "#8A3341" },
+      "butter": { "$value": "#FDEEC4" },
+      "mint": { "$value": "#EAFBF1" },
+      "green-700": { "$value": "#3A7758" },
+      "amber-800": { "$value": "#86590F" },
+      "red-100": { "$value": "#FFE3E3" },
+      "red-700": { "$value": "#B83F3F" },
+      "lavender": { "$value": "#E9DBF6" },
+      "sky-300": { "$value": "#CDEBFA" },
+      "honey": { "$value": "#FBE2A0" },
+      "aqua": { "$value": "#CFEFEA" },
+      "mint-300": { "$value": "#CFEFDA" }
+    }
+  },
+  "semantic": {
+    "color": {
+      "$type": "color",
+      "bg": {
+        "page": { "$value": "{primitive.color.ivory}" },
+        "surface": { "$value": "{primitive.color.white}" },
+        "sunken": { "$value": "{primitive.color.paper-200}" },
+        "inverse": { "$value": "{primitive.color.cocoa-900}" },
+        "ticket": { "$value": "{primitive.color.butter}" },
+        "organizer": { "$value": "{primitive.color.mint}" },
+        "selected": { "$value": "{primitive.color.blush-100}" }
+      },
+      "text": {
+        "default": { "$value": "{primitive.color.cocoa-900}" },
+        "muted": { "$value": "{primitive.color.cocoa-700}" },
+        "inverse": { "$value": "{primitive.color.ivory}" },
+        "link": { "$value": "{primitive.color.blush-800}" },
+        "link-hover": { "$value": "{primitive.color.blush-900}" }
+      },
+      "border": {
+        "subtle": { "$value": "{primitive.color.latte-100}" },
+        "strong": { "$value": "{primitive.color.cocoa-500}" },
+        "ink": { "$value": "{primitive.color.cocoa-900}" },
+        "dashed": { "$value": "{primitive.color.latte}" },
+        "focus": { "$value": "{primitive.color.sky-800}" }
+      },
+      "action": {
+        "primary-bg": { "$value": "{primitive.color.sky}" },
+        "primary-bg-hover": { "$value": "{primitive.color.sky-200}" },
+        "primary-fg": { "$value": "{primitive.color.cocoa-900}" },
+        "primary-border": { "$value": "{primitive.color.cocoa-900}" },
+        "accent": { "$value": "{primitive.color.blush}" },
+        "accent-fg": { "$value": "{primitive.color.blush-800}" },
+        "danger-bg": { "$value": "{primitive.color.red-700}" },
+        "danger-fg": { "$value": "{primitive.color.white}" }
+      },
+      "status": {
+        "success-fg": { "$value": "{primitive.color.green-700}" },
+        "success-bg": { "$value": "{primitive.color.mint}" },
+        "warning-fg": { "$value": "{primitive.color.amber-800}" },
+        "warning-bg": { "$value": "{primitive.color.butter}" },
+        "danger-fg": { "$value": "{primitive.color.red-700}" },
+        "danger-bg": { "$value": "{primitive.color.red-100}" },
+        "info-fg": { "$value": "{primitive.color.sky-800}" },
+        "info-bg": { "$value": "{primitive.color.sky}" }
+      },
+      "category": {
+        "ceramics": { "$value": "{primitive.color.blush}" },
+        "leathercraft": { "$value": "{primitive.color.latte}" },
+        "floral": { "$value": "{primitive.color.lavender}" },
+        "printmaking": { "$value": "{primitive.color.sky-300}" },
+        "typography": { "$value": "{primitive.color.cocoa-900}" },
+        "woodworking": { "$value": "{primitive.color.honey}" },
+        "textile": { "$value": "{primitive.color.aqua}" },
+        "illustration": { "$value": "{primitive.color.mint-300}" }
+      }
+    }
+  },
+  "space": {
+    "$type": "dimension",
+    "1": { "$value": "4px" },
+    "2": { "$value": "8px" },
+    "3": { "$value": "12px" },
+    "4": { "$value": "16px" },
+    "5": { "$value": "24px" },
+    "6": { "$value": "32px" },
+    "7": { "$value": "48px" },
+    "8": { "$value": "64px" },
+    "9": { "$value": "96px" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": { "$value": "6px" },
+    "md": { "$value": "12px" },
+    "lg": { "$value": "18px" },
+    "full": { "$value": "999px" }
+  },
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "display": { "$value": ["Noto Serif TC", "serif"] },
+      "body": { "$value": ["PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "system-ui", "sans-serif"] },
+      "mono": { "$value": ["IBM Plex Mono", "monospace"] }
+    },
+    "size": {
+      "$type": "dimension",
+      "display": { "$value": "56px", "$description": "mobile 36px" },
+      "h1": { "$value": "40px", "$description": "mobile 30px" },
+      "h2": { "$value": "30px", "$description": "mobile 24px" },
+      "h3": { "$value": "22px", "$description": "mobile 20px" },
+      "h4": { "$value": "18px" },
+      "body-lg": { "$value": "18px", "$description": "mobile 17px" },
+      "body": { "$value": "16px" },
+      "body-sm": { "$value": "14px" },
+      "caption": { "$value": "13px" },
+      "mono": { "$value": "14px" }
+    }
+  },
+  "shadow": {
+    "$type": "shadow",
+    "sm": { "$value": { "color": "#5D493E0F", "offsetX": "0px", "offsetY": "1px", "blur": "2px", "spread": "0px" } },
+    "md": { "$value": { "color": "#5D493E14", "offsetX": "0px", "offsetY": "6px", "blur": "16px", "spread": "0px" } },
+    "lg": { "$value": { "color": "#5D493E2E", "offsetX": "0px", "offsetY": "12px", "blur": "32px", "spread": "0px" } },
+    "sticker": { "$value": { "color": "#EFE6DC", "offsetX": "0px", "offsetY": "4px", "blur": "0px", "spread": "0px" } },
+    "sticker-hover": { "$value": { "color": "#5D493E", "offsetX": "0px", "offsetY": "4px", "blur": "0px", "spread": "0px" } }
+  },
+  "duration": {
+    "$type": "duration",
+    "fast": { "$value": "120ms" },
+    "base": { "$value": "200ms" },
+    "slow": { "$value": "320ms" }
+  }
+}
