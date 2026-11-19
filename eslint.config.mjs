@@ -34,6 +34,11 @@ export default withNuxt(
     },
   },
   {
+    // 命令列腳本以 console 輸出結果
+    files: ['scripts/**/*.mjs'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     // 測試需要解析沒有型別的 JSON（API 回應、JSON-LD），允許 any
     files: ['tests/**/*.ts'],
     rules: { '@typescript-eslint/no-explicit-any': 'off' },

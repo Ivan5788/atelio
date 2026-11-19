@@ -33,8 +33,8 @@ defineProps<{
         <NuxtLink :to="listLink">用更多條件篩選 →</NuxtLink>
       </div>
       <ul class="landing__grid">
-        <li v-for="workshop in workshops" :key="workshop.id">
-          <WorkshopCard :workshop="workshop" />
+        <li v-for="(workshop, index) in workshops" :key="workshop.id">
+          <WorkshopCard :workshop="workshop" :priority="index === 0" />
         </li>
       </ul>
     </section>

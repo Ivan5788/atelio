@@ -10,9 +10,15 @@ import type { WorkshopSummary } from '#shared/types/domain'
 import { LEVEL_LABELS } from '#shared/types/domain'
 import { formatDuration, formatPrice, seatsLabel, ticketDate } from '#shared/utils/format'
 
-const props = withDefaults(defineProps<{ workshop: WorkshopSummary; headingLevel?: 2 | 3 }>(), {
-  headingLevel: 3,
-})
+const props = withDefaults(
+  defineProps<{
+    workshop: WorkshopSummary
+    headingLevel?: 2 | 3
+    /** 首屏第一張卡片：照片立即載入並提高優先權（它通常就是行動版的 LCP 元素） */
+    priority?: boolean
+  }>(),
+  { headingLevel: 3, priority: false },
+)
 
 const ticket = computed(() =>
   props.workshop.nextSession ? ticketDate(props.workshop.nextSession.startsAt) : null,
@@ -26,7 +32,12 @@ const seats = computed(() =>
   <article class="card">
     <div class="card__cover">
       <!-- 卡片的照片是示意用，旁邊的標題已說明內容，所以設為裝飾圖（alt=""） -->
-      <WorkshopPhoto :image="workshop.image" :category="workshop.category" decorative />
+      <WorkshopPhoto
+        :image="workshop.image"
+        :category="workshop.category"
+        :priority="priority"
+        decorative
+      />
       <FavoriteButton :slug="workshop.slug" :title="workshop.title" class="card__favorite" />
     </div>
     <div class="card__body">

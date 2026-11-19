@@ -8,8 +8,9 @@ import { waitForHydration } from './support/hydration'
 
 async function demoLogin(page: Page) {
   await page.goto('/login')
+  await waitForHydration(page)
   await page.getByRole('button', { name: '一鍵 Demo 登入（免註冊）' }).click()
-  await expect(page).toHaveURL(/\/account$/)
+  await expect(page).toHaveURL((url) => url.pathname === '/account')
 }
 
 test('visitor can search, filter, book and cancel a workshop', async ({ page }) => {
@@ -85,8 +86,10 @@ test('visitor can search, filter, book and cancel a workshop', async ({ page }) 
 test('private pages redirect to login and back', async ({ page }) => {
   await page.goto('/account/bookings')
   await expect(page).toHaveURL(/\/login\?redirect=(%2F|\/)account(%2F|\/)bookings/)
+  await waitForHydration(page)
   await page.getByRole('button', { name: '一鍵 Demo 登入（免註冊）' }).click()
-  await expect(page).toHaveURL(/\/account\/bookings$/)
+  // 比對 pathname：登入頁網址本身就以 redirect=/account/bookings 結尾，用正規表示式會誤判
+  await expect(page).toHaveURL((url) => url.pathname === '/account/bookings')
 })
 
 test('favorite toggles from the list and appears in account favorites', async ({ page }) => {
@@ -124,5 +127,5 @@ test('register form validates with shared schema', async ({ page }) => {
   await page.getByLabel(/^密碼/).fill('atelio2026')
   await page.getByLabel('確認密碼').fill('atelio2026')
   await page.getByRole('button', { name: '建立帳號' }).click()
-  await expect(page).toHaveURL(/\/account$/)
+  await expect(page).toHaveURL((url) => url.pathname === '/account')
 })

@@ -1,12 +1,14 @@
 import { expect, test } from '@playwright/test'
+import { waitForHydration } from './support/hydration'
 
 /**
  * 後台流程（docs/01-PRD.md §6）：新增工作坊 → 編輯 → 下架 → 刪除
  */
 test('organizer can create, edit, unpublish and delete a workshop', async ({ page }) => {
   await page.goto('/login?redirect=/studio')
+  await waitForHydration(page)
   await page.getByRole('button', { name: '一鍵 Demo 登入（免註冊）' }).click()
-  await expect(page).toHaveURL(/\/studio$/)
+  await expect(page).toHaveURL((url) => url.pathname === '/studio')
   await expect(page.getByRole('heading', { name: '數據總覽' })).toBeVisible()
   await expect(page.getByText('本月報名')).toBeVisible()
   await expect(page.locator('canvas').first()).toBeVisible()

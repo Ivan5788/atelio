@@ -28,3 +28,6 @@ coverage
 playwright-report
 test-results
 .vercel
+
+# 本機量測報告（Lighthouse）
+reports/

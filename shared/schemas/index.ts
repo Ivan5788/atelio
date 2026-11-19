@@ -10,6 +10,9 @@ import { MAX_BOOKING_QUANTITY } from '../utils/booking'
 
 // Zod 內建錯誤訊息（未自訂訊息的欄位）使用繁體中文
 z.config(z.locales.zhTW())
+// 不使用 new Function 即時編譯驗證器：網站的 CSP 不允許 eval（'unsafe-eval'），
+// Zod 預設會先嘗試、失敗後才退回，每頁都會產生一則 CSP 違規紀錄（Phase 6 實測發現）。
+z.config({ jitless: true })
 
 const MAX_PRICE = 100_000
 

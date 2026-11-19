@@ -147,7 +147,7 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 
 | 角色 | 字體 | 理由 |
 | --- | --- | --- |
-| 標題 Display | **Noto Serif TC**（600 / 700） | 襯線體帶出「簡章、雜誌」的編輯感，也與一般 SaaS 的無襯線風格區隔。 |
+| 標題 Display | **Noto Serif TC**（700；Phase 6 為效能移除 600） | 襯線體帶出「簡章、雜誌」的編輯感，也與一般 SaaS 的無襯線風格區隔。 |
 | 內文 Body | 系統字體：`"PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif` | 中文字型檔很大（完整字集數 MB），內文使用系統字體可以**零下載**，對 LCP 最有利。 |
 | 資料 Mono | **IBM Plex Mono**（500） | 日期、價格、名額、票號——模仿印刷票券，也讓數字等寬、表格對齊。 |
 

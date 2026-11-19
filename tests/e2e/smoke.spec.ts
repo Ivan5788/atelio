@@ -83,3 +83,32 @@ test('filtered list pages point their canonical to the unfiltered list', async (
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/workshops$/)
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
 })
+
+test('C-08: CSP has no unsafe-inline for scripts and blocks injected inline scripts', async ({
+  page,
+}) => {
+  for (const path of ['/', '/workshops/wheel-throwing-basics-taipei', '/faq']) {
+    const res = await page.goto(path)
+    const scriptSrc = res!.headers()['content-security-policy']!.match(/script-src [^;]*/)![0]
+    expect(scriptSrc, path).not.toContain("'unsafe-inline'")
+    expect(scriptSrc, path).not.toContain("'unsafe-eval'")
+    expect(scriptSrc, path).toMatch(/'sha256-/)
+  }
+
+  // 模擬 XSS：在頁面上插入一段內嵌腳本，CSP 應該阻擋執行並發出違規事件
+  const result = await page.evaluate(
+    () =>
+      new Promise<{ executed: boolean; violated: boolean }>((resolve) => {
+        let violated = false
+        document.addEventListener('securitypolicyviolation', () => (violated = true))
+        const script = document.createElement('script')
+        script.textContent = 'window.__xss = true'
+        document.body.appendChild(script)
+        setTimeout(
+          () => resolve({ executed: Boolean((window as { __xss?: boolean }).__xss), violated }),
+          300,
+        )
+      }),
+  )
+  expect(result).toEqual({ executed: false, violated: true })
+})

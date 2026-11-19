@@ -116,3 +116,36 @@
 3. **IDOR 是什麼、怎麼防**：只檢查「有沒有登入」不夠，還要檢查「這筆資料是不是你的」。
 4. **為什麼金額由後端計算**：前端送來的任何數字都可能被竄改。
 5. **為什麼 ISR 快取不能包含使用者資料**：CDN 快取是所有人共用的，會把 A 的資料顯示給 B。
+
+---
+
+## 8. Phase 6 實測結果（2026-11-20，本機正式版建置）
+
+| ID | 控制措施 | 實測方式 | 結果 |
+| --- | --- | --- | --- |
+| C-01 | Session Cookie 屬性 | E2E 讀取 `Set-Cookie` | `HttpOnly`、`Secure`、`SameSite=Lax` ✅ |
+| C-02 | 輸入驗證 | E2E 直接打 API | 非法參數回 400 並附欄位錯誤 ✅ |
+| C-03 | 越權存取（IDOR） | E2E 兩個帳號互相讀取／修改／取消預約 | 一律 404，原預約不受影響 ✅ |
+| C-05 | 速率限制 | 腳本連續登入 | 第 11 次起回 429，附 `Retry-After: 600` ✅ |
+| C-06 | 請求大小 | 程式檢查（`01.api-guard.ts`） | 超過 100 KB 回 413（含 PATCH）✅ |
+| C-08 | CSP | E2E 檢查標頭＋在頁面插入內嵌腳本 | `script-src` **沒有** `'unsafe-inline'`、`'unsafe-eval'`；插入的腳本未執行並觸發違規事件 ✅ |
+| C-08a | 快取頁面的 CSP | 檢查 SSR／ISR 與預先產生頁面的標頭 | 全站改用 hash：預先產生頁面由 nuxt-security 計算，SSR／ISR 頁面由 `server/plugins/csp-ssr-hashes.ts` 計算。所有頁面（含登入後的會員中心與 Studio）CSP 違規 0 件 ✅ |
+| C-10 | 機密不進前端 | 以假的「金絲雀」機密建置後搜尋 `.output` | 前端與伺服器產出皆 0 筆 ✅ |
+| C-11 | Origin／Content-Type | E2E | 缺少或外站 Origin 回 403；表單格式回 415 ✅ |
+| C-13 | 依賴弱點 | `npm audit` | 0 high／critical；12 moderate，見下方說明 |
+| C-14 | 登入失敗訊息 | E2E 比較錯誤密碼與不存在的帳號 | 狀態碼與訊息完全相同 ✅ |
+
+### CSP 的取捨（更新）
+- **script-src**：已移除 `'unsafe-inline'`。nonce 不適合 ISR（CDN 快取後所有人拿到同一個 nonce），所以 SSR 頁面也改用 hash：頁面上會執行的內嵌腳本只有 Nuxt 的設定與 importmap，內容在同一次部署中固定，hash 與快取的 HTML 永遠一致。
+- **style-src**：仍允許 `'unsafe-inline'`。Nuxt 會內嵌元件 CSS，Vue 的 `:style` 綁定也會產生 style 屬性。樣式注入無法執行程式，風險明顯低於腳本注入。
+- **Zod**：設定 `jitless: true`。Zod 4 預設會嘗試用 `new Function` 加速驗證，被 CSP 擋下後才退回，每頁都留下一則違規紀錄（Lighthouse 最佳做法因此只有 96 分）。
+
+### npm audit：12 個 moderate
+全部來自同一個問題：`minimatch` 的 ReDoS（GHSA-g3hv-75wg-m249，修正版 11.0.1），經由 `nitropack → archiver → readdir-glob` 與測試工具 `@vue/test-utils → js-beautify → editorconfig` 引入。
+- **不在執行環境中**：正式執行的 `.output/server` 內沒有這些套件（實際檢查 39 個打包套件）。
+- **無法被利用**：它們只在建置與測試時處理專案自己的 glob 設定，不接觸使用者輸入。
+- **處理方式**：`npm audit fix --force` 會降版測試工具（破壞性變更），因此不執行；CI 以 `--audit-level=high` 把關，並新增 `.github/dependabot.yml` 追蹤 Nuxt 上游更新。
+
+### 尚待部署後確認（Phase 7）
+- securityheaders.com、Mozilla Observatory 的評分（需要公開網址）。
+- Vercel 上 ISR 頁面的 CSP hash 與快取 HTML 是否一致（本機以 node preset 驗證，Vercel preset 的建置產出已確認 ISR 設定）。

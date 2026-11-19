@@ -15,7 +15,9 @@
     "typecheck": "nuxt typecheck",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test tests/e2e/a11y.spec.ts tests/e2e/keyboard.spec.ts",
+    "audit:lighthouse": "node scripts/lighthouse.mjs"
   },
   "dependencies": {
     "@nuxt/fonts": "^1.2.0",
@@ -41,6 +43,7 @@
     "esbuild@0.28.2": true
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@nuxt/eslint": "^1.17.0",
     "@nuxt/test-utils": "^4.4.0",
     "@playwright/test": "^1.65.1",

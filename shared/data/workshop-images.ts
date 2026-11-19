@@ -16,7 +16,7 @@ export interface WorkshopImageCredit {
   url: string
 }
 
-export const WORKSHOP_IMAGE_WIDTHS = [640, 1280] as const
+export const WORKSHOP_IMAGE_WIDTHS = [640, 960, 1280] as const
 
 export const workshopImages: Record<string, WorkshopImageCredit> = {
   w01: {

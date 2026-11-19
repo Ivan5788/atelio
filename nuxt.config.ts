@@ -142,6 +142,8 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // 靜態檔預先壓縮成 gzip／brotli（node 伺服器會直接送出壓縮版；Vercel 本身也會壓縮）
+    compressPublicAssets: { gzip: true, brotli: true },
     prerender: {
       // routeRules 的 prerender 只標記「這些路徑要預先產生」，不會自己找出有哪些文章；
       // 不開 crawlLinks（會順著連結把 ISR 頁面也變成靜態），改為明確列出文章網址。
@@ -153,10 +155,10 @@ export default defineNuxtConfig({
   },
 
   security: {
-    // Prerender 與 ISR 頁面的 HTML 會被 CDN 快取，每次請求產生的 nonce 會失效，
-    // 所以關閉 nonce；靜態頁改用 script hash（ssg.hashScripts）。
-    // SSR 頁面的 inline script 目前以 'unsafe-inline' 放行，這是已知取捨，
-    // Phase 6 會實測 CSP 並記錄結果（docs/05-security.md C-05）。
+    // Prerender 與 ISR 頁面的 HTML 會被 CDN 快取，每次請求產生的 nonce 會失效，所以關閉 nonce，全站改用 hash：
+    // - 預先產生的頁面：nuxt-security 的 ssg.hashScripts
+    // - SSR／ISR 頁面：server/plugins/csp-ssr-hashes.ts（Phase 6 新增）
+    // 因此 script-src 不需要 'unsafe-inline'，被注入的內嵌腳本因為 hash 不符而不會執行。
     nonce: false,
     ssg: {
       meta: true,
@@ -166,9 +168,12 @@ export default defineNuxtConfig({
     headers: {
       contentSecurityPolicy: {
         'default-src': ["'self'"],
-        'script-src': ["'self'", "'unsafe-inline'"],
+        'script-src': ["'self'"],
+        // 樣式仍允許 inline：Nuxt 會內嵌元件 CSS、Vue 的 :style 綁定會產生 style 屬性。
+        // 樣式注入的風險遠低於腳本注入（無法執行程式），這是記錄在 docs/05-security.md 的取捨。
         'style-src': ["'self'", "'unsafe-inline'"],
-        'img-src': ["'self'", 'data:', 'https://images.unsplash.com'],
+        // 照片都放在站內（public/images），不需要允許外部圖片網域
+        'img-src': ["'self'", 'data:'],
         'font-src': ["'self'"],
         'connect-src': ["'self'"],
         'object-src': ["'none'"],
@@ -201,13 +206,11 @@ export default defineNuxtConfig({
   fonts: {
     // 只下載標題與數字用的字型；內文使用系統字體（零下載，有利 LCP）
     families: [
-      { name: 'Noto Serif TC', weights: [600, 700] },
+      // 中文字型被 Google Fonts 切成一百多個字元區段，每個字重都會產生一百多個 @font-face；
+      // 實測 600＋700 兩種字重讓每頁 HTML 內嵌 249 KB 的 CSS，所以只保留 700。
+      { name: 'Noto Serif TC', weights: [700] },
       { name: 'IBM Plex Mono', weights: [500] },
     ],
-  },
-
-  image: {
-    domains: ['images.unsplash.com'],
   },
 
   typescript: {

@@ -35,12 +35,10 @@
   }
   line-height: $line-height;
 
-  @if $name == 'display' or $name == 'h1' or $name == 'h2' {
+  // 標題只使用 700 一種字重：中文字型每多一種字重，就多一百多個 @font-face（Phase 6 效能調整）
+  @if $name == 'display' or $name == 'h1' or $name == 'h2' or $name == 'h3' or $name == 'h4' {
     font-family: var(--font-display);
     font-weight: 700;
-  } @else if $name == 'h3' or $name == 'h4' {
-    font-family: var(--font-display);
-    font-weight: 600;
   } @else if $name == 'mono' {
     font-family: var(--font-mono);
     font-weight: 500;

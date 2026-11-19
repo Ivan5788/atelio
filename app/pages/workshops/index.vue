@@ -213,8 +213,8 @@ const resultsRef = ref<HTMLElement>()
 
         <template v-else>
           <ul class="grid" :class="{ 'is-stale': status === 'pending' }">
-            <li v-for="workshop in data.items" :key="workshop.id">
-              <WorkshopCard :workshop="workshop" :heading-level="2" />
+            <li v-for="(workshop, index) in data.items" :key="workshop.id">
+              <WorkshopCard :workshop="workshop" :heading-level="2" :priority="index === 0" />
             </li>
           </ul>
           <BasePagination :page="data.page" :total-pages="data.totalPages" :to="pageLink" />

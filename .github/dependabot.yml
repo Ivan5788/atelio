@@ -1,0 +1,17 @@
+# 依賴更新（docs/05-security.md C-13）：每週檢查一次 npm 與 GitHub Actions 的新版本並開 PR。
+# 次要與修補版本合併成一個 PR，減少雜訊；主版本更新分開，需要人工評估相容性。
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
