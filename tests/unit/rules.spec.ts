@@ -4,6 +4,7 @@ import {
   loginSchema,
   phoneSchema,
   registerSchema,
+  studioSessionSchema,
   studioWorkshopSchema,
   toFieldErrors,
 } from '#shared/schemas'
@@ -118,7 +119,8 @@ describe('studio', () => {
     price: '2400',
     durationMinutes: '180',
     capacityPerSession: '4',
-    sessions: [{ startsAt: '2026-12-20T14:00:00+08:00' }],
+    // 場次必須在未來，用相對時間避免測試在某個日期之後失效
+    sessions: [{ startsAt: new Date(Date.now() + 30 * 86_400_000).toISOString() }],
     status: 'draft',
   }
 
@@ -166,5 +168,13 @@ describe('memory rate limiter', () => {
     expect((await limiter.limit('other-ip')).success).toBe(true)
     t = 1001
     expect((await limiter.limit('ip')).success).toBe(true)
+  })
+})
+
+describe('studio session time', () => {
+  it('過去的場次時間會被拒絕', () => {
+    expect(studioSessionSchema.safeParse({ startsAt: '2020-01-01T10:00:00+08:00' }).success).toBe(
+      false,
+    )
   })
 })

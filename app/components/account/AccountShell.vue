@@ -42,6 +42,8 @@ const isActive = (link: (typeof links)[number]) =>
 <style scoped lang="scss">
 .shell {
   display: grid;
+  // minmax(0, 1fr)：不讓內容（例如寬表格）撐開欄寬造成整頁水平捲動
+  grid-template-columns: minmax(0, 1fr);
   gap: space(5);
   padding-block: space(5) space(8);
 

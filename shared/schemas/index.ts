@@ -142,7 +142,9 @@ export const updateBookingSchema = z.object({
 // ── Studio ─────────────────────────────────────────────
 export const studioSessionSchema = z.object({
   id: z.string().max(64).optional(),
-  startsAt: z.iso.datetime({ offset: true, message: '請選擇有效的日期與時間' }),
+  startsAt: z.iso
+    .datetime({ offset: true, message: '請選擇有效的日期與時間' })
+    .refine((value) => Date.parse(value) > Date.now(), '場次時間需晚於現在'),
 })
 
 export const studioWorkshopSchema = z.object({
