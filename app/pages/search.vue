@@ -4,7 +4,12 @@
  */
 import { catalogService } from '~/services/catalog.service'
 
-useSeoMeta({ title: '搜尋', robots: 'noindex, follow' })
+usePageSeo({
+  title: '搜尋',
+  description: '同時搜尋 Atelio 的工作坊、講師與知識文章。',
+  path: '/search',
+  noindex: true,
+})
 
 const route = useRoute()
 const q = computed(() =>

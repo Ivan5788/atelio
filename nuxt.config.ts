@@ -15,6 +15,18 @@ const cachedPage = isVercel ? { isr: 3600 } : { swr: 3600 }
 
 const noindex = { 'X-Robots-Tag': 'noindex, nofollow' }
 
+// 全站是否開放搜尋引擎索引（預設不開放）。本站使用虛構資料，只展示 SEO 技術，不希望被無關的人搜尋到。
+// 關閉時：所有回應加上 X-Robots-Tag: noindex、每頁輸出 robots noindex、robots.txt 不列 sitemap 並擋 AI 爬蟲。
+// 這個值在「建置時」決定（標頭寫進路由規則），修改後需要重新部署。
+const indexable = process.env.NUXT_PUBLIC_INDEXABLE === 'true'
+
+// 正式網址：優先使用環境變數，其次使用 Vercel 自動提供的正式網域，本機為 localhost
+const siteUrl =
+  process.env.NUXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:3000')
+
 // Upstash 環境變數存在時（Vercel 正式／預覽環境）使用 Redis；
 // 本機沒有設定時改用 memory，clone 下來不需要任何帳號就能執行。
 // 這段在「建置時」判斷，所以 Vercel 上要在 Build 階段就提供這兩個變數。
@@ -79,7 +91,8 @@ export default defineNuxtConfig({
       apiMax: 60,
     },
     public: {
-      siteUrl: 'http://localhost:3000',
+      siteUrl,
+      indexable,
     },
   },
 
@@ -90,6 +103,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // 全站不索引時，每個回應都帶 X-Robots-Tag（比 meta 更全面：圖片、JSON、PDF 也適用）
+    ...(indexable ? {} : { '/**': { headers: noindex } }),
+
     // 首頁有「近期場次」，場次日期依當下時間計算；prerender 會凍結在建置當天，
     // 所以改用 ISR，每小時重新產生一次。
     '/': cachedPage,

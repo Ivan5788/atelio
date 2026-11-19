@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { faqNode, graph } from '#shared/utils/structured-data'
 /**
  * 常見問題（F-08），Prerender。問答以 <details> 呈現：原生可展開、鍵盤可操作，
  * 而且答案文字在 HTML 中完整存在，搜尋引擎與 AI 爬蟲都讀得到（Phase 5 加上 FAQPage 結構化資料）。
  */
-useSeoMeta({
+usePageSeo({
   title: '常見問題',
   description: '預約、取消、改期、付款與開課的常見問題，以及 Atelio 示範網站的資料說明。',
+  path: '/faq',
 })
 
 const groups = [
@@ -75,6 +77,12 @@ const groups = [
     ],
   },
 ]
+
+// FAQPage：問答在 HTML 中完整存在，結構化資料只是讓機器更容易對應「問題 → 答案」
+useJsonLd(
+  'faq',
+  graph([faqNode(groups.flatMap((g) => g.items.map((i) => ({ question: i.q, answer: i.a }))))]),
+)
 </script>
 
 <template>

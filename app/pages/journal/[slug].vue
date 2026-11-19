@@ -6,6 +6,7 @@
 import { formatDate } from '#shared/utils/format'
 import { catalogService } from '~/services/catalog.service'
 import { CATEGORY_NAMES } from '~/utils/labels'
+import { articleNode, graph } from '#shared/utils/structured-data'
 
 // 在同一種頁面之間切換（例如點相關工作坊）時重新建立元件，資料與捲動狀態不殘留
 definePageMeta({ key: (route) => route.fullPath })
@@ -19,10 +20,15 @@ const data = await usePageData(
   '找不到這篇文章',
 )
 
-useSeoMeta({
-  title: () => data.value?.article.title ?? '知識專欄',
-  description: () => data.value?.article.excerpt,
-})
+usePageSeo(() => ({
+  title: data.value?.article.title ?? '知識專欄',
+  description: data.value?.article.excerpt ?? '',
+  path: `/journal/${slug}`,
+  type: 'article',
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('article', () => (data.value ? graph([articleNode(siteUrl, data.value.article)]) : {}))
 </script>
 
 <template>

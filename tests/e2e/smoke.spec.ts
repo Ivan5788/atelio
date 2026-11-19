@@ -78,9 +78,8 @@ test('unknown workshop, category and instructor return HTTP 404', async ({ reque
   }
 })
 
-test('filtered list pages are not indexable', async ({ page }) => {
-  await page.goto('/workshops?category=ceramics')
+test('filtered list pages point their canonical to the unfiltered list', async ({ page }) => {
+  await page.goto('/workshops?category=ceramics&page=1')
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/workshops$/)
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
-  await page.goto('/workshops')
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /index, follow/)
 })

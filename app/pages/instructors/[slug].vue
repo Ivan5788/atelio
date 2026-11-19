@@ -4,6 +4,7 @@
  */
 import { catalogService } from '~/services/catalog.service'
 import { CATEGORY_NAMES } from '~/utils/labels'
+import { graph, profileNode } from '#shared/utils/structured-data'
 
 // 在同一種頁面之間切換（例如點相關工作坊）時重新建立元件，資料與捲動狀態不殘留
 definePageMeta({ key: (route) => route.fullPath })
@@ -17,11 +18,16 @@ const data = await usePageData(
   '找不到這位講師',
 )
 
-useSeoMeta({
-  title: () =>
-    data.value ? `${data.value.instructor.name}｜${data.value.instructor.studio}` : '講師',
-  description: () => data.value?.instructor.bio,
-})
+usePageSeo(() => ({
+  title: data.value ? `${data.value.instructor.name}｜${data.value.instructor.studio}` : '講師',
+  description: data.value?.instructor.bio ?? '',
+  path: `/instructors/${slug}`,
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('instructor', () =>
+  data.value ? graph([profileNode(siteUrl, data.value.instructor)]) : {},
+)
 </script>
 
 <template>

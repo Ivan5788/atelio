@@ -33,6 +33,11 @@ export default withNuxt(
       ],
     },
   },
+  {
+    // 測試需要解析沒有型別的 JSON（API 回應、JSON-LD），允許 any
+    files: ['tests/**/*.ts'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
+  },
   // 關閉與 Prettier 衝突的格式規則：格式交給 Prettier，ESLint 只管程式品質
   prettier,
 )

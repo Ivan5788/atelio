@@ -52,6 +52,8 @@ graph TD
 - **SSR**：每次請求伺服器渲染。
 - **CSR**：僅在瀏覽器渲染（會員、後台等私人頁面）。
 
+> **Phase 5 更新**：下表「索引」欄是「開放索引時」的設定。本站資料為虛構，整站預設以 `NUXT_PUBLIC_INDEXABLE` 關閉索引，見 [11-seo-geo.md](11-seo-geo.md)。
+
 | 路由 | 頁面 | 渲染 | 索引 | 結構化資料 |
 | --- | --- | --- | --- | --- |
 | `/` | 首頁 | ISR（Phase 4 由 Prerender 改為 ISR：近期場次依當下時間計算，prerender 會凍結在建置當天） | ✅ | `WebSite`（含 SearchAction）、`Organization` |

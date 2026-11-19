@@ -16,6 +16,7 @@ import {
   toQuery,
   type WorkshopFilters,
 } from '~/utils/workshop-filters'
+import { graph, itemListNode } from '#shared/utils/structured-data'
 
 const route = useRoute()
 const filters = computed(() => parseFilters(route.query))
@@ -31,12 +32,17 @@ const { data, status, error, refresh } = await useAsyncData(
 const { data: categories } = await useAsyncData('categories', () => catalogService.listCategories())
 
 const filtered = computed(() => hasActiveFilters(filters.value))
-useSeoMeta({
+usePageSeo(() => ({
   title: '探索工作坊',
   description: '依分類、城市、價格、難度與日期篩選全台手作工作坊，查看剩餘名額並線上預約。',
+  // canonical 一律指向沒有 query 的 /workshops
+  path: '/workshops',
   // 篩選結果組合太多、內容高度重複，不讓搜尋引擎索引，改由分類與城市落地頁承接流量
-  robots: () => (filtered.value || filters.value.page > 1 ? 'noindex, follow' : 'index, follow'),
-})
+  noindex: filtered.value || filters.value.page > 1,
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('list', () => graph([itemListNode(siteUrl, data.value?.items ?? [], '工作坊列表')]))
 
 function update(patch: Partial<WorkshopFilters>) {
   // 改變篩選條件時回到第 1 頁；replace 避免每勾一個選項就多一筆瀏覽紀錄

@@ -4,14 +4,19 @@
  */
 import { formatDate } from '#shared/utils/format'
 import { catalogService } from '~/services/catalog.service'
+import { blogNode, graph } from '#shared/utils/structured-data'
 
-useSeoMeta({
+usePageSeo({
   title: '知識專欄',
   description:
     '手作課程的準備、比較與保養指南：第一次上陶藝課、手捏與拉坯的差別、皮件保養與挑選工作坊。',
+  path: '/journal',
 })
 
 const { data: articles } = await useAsyncData('articles', () => catalogService.listArticles())
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('blog', () => graph([blogNode(siteUrl, articles.value ?? [])]))
 </script>
 
 <template>

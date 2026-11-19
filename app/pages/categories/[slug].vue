@@ -5,6 +5,7 @@
 import { CATEGORY_SLUGS, type CategorySlug } from '#shared/types/domain'
 import { catalogService } from '~/services/catalog.service'
 import { CATEGORY_NAMES } from '~/utils/labels'
+import { graph, itemListNode } from '#shared/utils/structured-data'
 
 const route = useRoute()
 const slug = String(route.params.slug)
@@ -20,10 +21,28 @@ const { data } = await useAsyncData(`category-${slug}`, async () => {
   return { category: categories.find((c) => c.slug === slug)!, workshops: list.items }
 })
 
-useSeoMeta({
-  title: () => `${data.value?.category.name ?? ''}工作坊`,
-  description: () => data.value?.category.intro,
-})
+usePageSeo(() => ({
+  title: `${data.value?.category.name ?? ''}工作坊`,
+  description: data.value?.category.intro ?? '',
+  path: `/categories/${slug}`,
+  image: data.value?.workshops[0]?.image?.src.replace('-640', '-1280'),
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('category', () =>
+  graph([
+    {
+      '@type': 'CollectionPage',
+      name: `${data.value?.category.name ?? ''}工作坊`,
+      description: data.value?.category.intro,
+      mainEntity: itemListNode(
+        siteUrl,
+        data.value?.workshops ?? [],
+        `${data.value?.category.name ?? ''}工作坊`,
+      ),
+    },
+  ]),
+)
 
 const related = CATEGORY_SLUGS.filter((s) => s !== slug).map((s) => ({
   label: CATEGORY_NAMES[s],

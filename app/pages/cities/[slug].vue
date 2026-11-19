@@ -5,6 +5,7 @@
 import { CITY_SLUGS, type CitySlug } from '#shared/types/domain'
 import { catalogService } from '~/services/catalog.service'
 import { CITY_NAMES } from '~/utils/labels'
+import { graph, itemListNode } from '#shared/utils/structured-data'
 
 const route = useRoute()
 const slug = String(route.params.slug)
@@ -20,10 +21,28 @@ const { data } = await useAsyncData(`city-${slug}`, async () => {
   return { city: cities.find((c) => c.slug === slug)!, workshops: list.items }
 })
 
-useSeoMeta({
-  title: () => `${data.value?.city.name ?? ''}的手作工作坊`,
-  description: () => data.value?.city.intro,
-})
+usePageSeo(() => ({
+  title: `${data.value?.city.name ?? ''}的手作工作坊`,
+  description: data.value?.city.intro ?? '',
+  path: `/cities/${slug}`,
+  image: data.value?.workshops[0]?.image?.src.replace('-640', '-1280'),
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('city', () =>
+  graph([
+    {
+      '@type': 'CollectionPage',
+      name: `${data.value?.city.name ?? ''}的手作工作坊`,
+      description: data.value?.city.intro,
+      mainEntity: itemListNode(
+        siteUrl,
+        data.value?.workshops ?? [],
+        `${data.value?.city.name ?? ''}的手作工作坊`,
+      ),
+    },
+  ]),
+)
 
 const related = CITY_SLUGS.filter((s) => s !== slug).map((s) => ({
   label: CITY_NAMES[s],

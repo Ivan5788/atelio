@@ -103,3 +103,35 @@
 | 列表頁版面 | 結果數量移到結果區右上角（保留 `role="status"`，篩選後會被朗讀）；排序標籤與選單同一列（`BaseSelect` 新增 `inline`） |
 | Console 錯誤 `A listener indicated an asynchronous response…` | 這是瀏覽器擴充功能的訊息傳遞錯誤，專案程式碼沒有使用 `chrome.runtime`；以沒有擴充功能的 Playwright 瀏覽器開啟 Studio，沒有出現此錯誤 |
 | **本機每頁出現 `/_payload.json` 404** | node 環境不支援 ISR 規則，但前端仍依規則預載 payload。改為 Vercel 上用 ISR、其他環境用 SWR；並明確加上 `/_payload.json` 規則（Nuxt 只會為 ISR 自動補上）。修正後桌機與手機所有檢查頁面 console 0 錯誤；Vercel preset 建置仍產生 6 個 ISR 設定 |
+
+---
+
+## Phase 5 — SEO／GEO（2026-11-19）
+
+依求職者要求：**實作完整的 SEO 技術，但整站預設不被索引**，避免虛構資料被無關的人搜尋到。細節見 [11-seo-geo.md](11-seo-geo.md)。
+
+### 做了什麼
+- 全站索引開關 `NUXT_PUBLIC_INDEXABLE`（預設關閉）：所有回應帶 `X-Robots-Tag: noindex`、每頁 robots meta 為 noindex、robots.txt 封鎖 AI 訓練爬蟲。
+- `usePageSeo()`：title、description、canonical（不含 query）、Open Graph、Twitter Card；工作坊頁使用課程照片當分享圖，其他頁使用新做的 1200×630 預設圖。
+- `useJsonLd()` + 結構化資料產生器：WebSite／Organization、ItemList、CollectionPage、Course + CourseInstance、AggregateRating、Review、FAQPage、ProfilePage、Blog、Article、AboutPage、BreadcrumbList。
+- `/robots.txt`、`/sitemap.xml`（57 個網址，由資料產生）、`/llms.txt`；移除 Nuxt 範本內建的靜態 robots.txt。
+
+### 決策
+| 問題 | 處理 |
+| --- | --- |
+| 怎麼「確實」不被索引 | 不用 `Disallow: /`：robots.txt 只擋爬取不擋索引，被擋的爬蟲讀不到 noindex。改為允許爬取 + 標頭與 meta 雙重 noindex |
+| AI 爬蟲不一定遵守 noindex | 不開放時在 robots.txt 個別封鎖 GPTBot、ClaudeBot、CCBot、Google-Extended、PerplexityBot、Bytespider |
+| 結構化資料描述虛構課程 | 這正是預設不開放索引的理由之一；結構化資料作為技術展示，換成真實資料後才開放 |
+| JSON-LD 內容含使用者可見文字 | 序列化時跳脫 `<`，避免 `</script>` 注入 |
+| 麵包屑與 BreadcrumbList 可能不一致 | 由麵包屑元件同時輸出畫面與 JSON-LD |
+
+### 實際執行結果
+| 檢查 | 結果 |
+| --- | --- |
+| lint／型別檢查 | 0 錯誤／通過 |
+| `npm test` | 12 個檔案、218 個測試通過 |
+| `npm run test:e2e` | 42 個通過、14 個略過（API 安全與 SEO 測試只在桌機跑一次） |
+| 開放索引模式（`NUXT_PUBLIC_INDEXABLE=true`）手動實測 | 標頭消失；詳細頁 robots 為 `index, follow, max-image-preview:large`；篩選頁 `noindex, follow`；robots.txt 列出 sitemap；`/account` 仍帶 noindex 標頭 |
+
+### E2E 修正
+- 手機版測試偶爾在 hydration 完成前就輸入文字。新增 `tests/e2e/support/hydration.ts`，等 Vue app 掛載後才互動。

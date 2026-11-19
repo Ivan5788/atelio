@@ -8,9 +8,10 @@ import {
   ListChecks as IconList,
 } from 'lucide-vue-next'
 
-useSeoMeta({
+usePageSeo({
   title: '開課者專區',
   description: '用 Atelio Studio 上架工作坊、管理場次與名額，並查看報名趨勢與各課程表現。',
+  path: '/for-organizers',
 })
 
 const features = [

@@ -5,9 +5,10 @@
 import { catalogService } from '~/services/catalog.service'
 import { CATEGORY_NAMES } from '~/utils/labels'
 
-useSeoMeta({
+usePageSeo({
   title: '講師',
   description: 'Atelio 的工作坊講師與工作室介紹：陶藝、皮革、花藝、版畫、書法、木工、染織與插畫。',
+  path: '/instructors',
 })
 
 const { data: instructors } = await useAsyncData('instructors', () =>

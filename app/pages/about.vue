@@ -3,12 +3,23 @@
  * 關於 Atelio（F-09），Prerender：產品理念、作品聲明（示範資料）、技術說明。
  */
 import { workshopImages } from '#shared/data/workshop-images'
+import { graph, organizationNode } from '#shared/utils/structured-data'
 
-useSeoMeta({
+usePageSeo({
   title: '關於 Atelio',
   description:
     'Atelio 是一個求職作品：探索、比較並預約設計與手作工作坊的平台。網站上的課程與講師皆為虛構示範資料。',
+  path: '/about',
 })
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd(
+  'about',
+  graph([
+    { '@type': 'AboutPage', url: `${siteUrl}/about`, name: '關於 Atelio' },
+    organizationNode(siteUrl),
+  ]),
+)
 
 const credits = Object.entries(workshopImages).map(([id, credit]) => ({ id, ...credit }))
 

@@ -8,6 +8,7 @@ import { LEVEL_LABELS } from '#shared/types/domain'
 import { formatDate, formatDuration, formatPrice } from '#shared/utils/format'
 import { catalogService } from '~/services/catalog.service'
 import { useToastStore } from '~/stores/toast'
+import { courseNode, faqNode, graph } from '#shared/utils/structured-data'
 
 // 在同一種頁面之間切換（例如點相關工作坊）時重新建立元件，資料與捲動狀態不殘留
 definePageMeta({ key: (route) => route.fullPath })
@@ -23,10 +24,18 @@ const data = await usePageData(
 
 const workshop = computed(() => data.value?.workshop)
 
-useSeoMeta({
-  title: () => workshop.value?.title ?? '工作坊',
-  description: () => workshop.value?.summary,
-})
+usePageSeo(() => ({
+  title: workshop.value?.title ?? '工作坊',
+  description: workshop.value?.summary ?? '',
+  path: `/workshops/${slug.value}`,
+  image: workshop.value?.image?.src.replace('-640', '-1280'),
+  imageAlt: workshop.value?.image?.alt,
+}))
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('workshop', () =>
+  workshop.value ? graph([courseNode(siteUrl, workshop.value), faqNode(workshop.value.faq)]) : {},
+)
 
 // 預約面板出現在畫面上、或已經捲過它時，隱藏底部預約列（避免重複，也不會蓋住頁尾）
 const showMobileCta = ref(true)

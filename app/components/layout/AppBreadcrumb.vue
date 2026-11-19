@@ -2,11 +2,27 @@
 /**
  * 麵包屑：二層以上的公開頁面使用（docs/02-sitemap.md §4）。
  * 最後一項是目前頁面，不加連結並標示 aria-current="page"。
- * Phase 5 會在這裡一併輸出 BreadcrumbList 結構化資料。
+ * 同時輸出 BreadcrumbList 結構化資料：畫面上的麵包屑與 JSON-LD 來自同一份資料，不會不一致。
  */
-import type { RouteLocationRaw } from 'vue-router'
+import { breadcrumbNode, graph } from '#shared/utils/structured-data'
 
-defineProps<{ items: { label: string; to?: RouteLocationRaw }[] }>()
+const props = defineProps<{ items: { label: string; to?: string }[] }>()
+
+const route = useRoute()
+const { siteUrl } = useRuntimeConfig().public
+
+useJsonLd('breadcrumb', () =>
+  graph([
+    breadcrumbNode(siteUrl, [
+      { name: '首頁', path: '/' },
+      ...props.items.map((item, index) => ({
+        name: item.label,
+        // 最後一項（目前頁面）沒有連結，使用目前路徑
+        path: index === props.items.length - 1 || !item.to ? route.path : item.to,
+      })),
+    ]),
+  ]),
+)
 </script>
 
 <template>

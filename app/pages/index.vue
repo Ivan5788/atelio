@@ -8,11 +8,16 @@ import { catalogService } from '~/services/catalog.service'
 import { CITY_SLUGS } from '#shared/types/domain'
 import { CITY_NAMES } from '~/utils/labels'
 import { workshopImageFor } from '#shared/data/workshop-images'
+import { graph, organizationNode, websiteNode } from '#shared/utils/structured-data'
 
-useSeoMeta({
+usePageSeo({
   title: '探索並預約設計與手作工作坊',
   description: '比較全台陶藝、皮革、花藝、版畫工作坊的時間、價格與剩餘名額，線上直接預約。',
+  path: '/',
 })
+
+const { siteUrl } = useRuntimeConfig().public
+useJsonLd('site', graph([organizationNode(siteUrl), websiteNode(siteUrl)]))
 
 const { data, error, refresh } = await useAsyncData('home', async () => {
   const [upcoming, categories, articles] = await Promise.all([

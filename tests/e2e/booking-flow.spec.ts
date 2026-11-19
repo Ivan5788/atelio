@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
+import { waitForHydration } from './support/hydration'
 
 /**
  * 核心流程（docs/01-PRD.md §6 成功標準、docs/03-user-flow.md Flow 4）：
@@ -16,6 +17,7 @@ test('visitor can search, filter, book and cancel a workshop', async ({ page }) 
 
   // 搜尋 + 篩選：網址同步
   await page.goto('/workshops')
+  await waitForHydration(page)
   await page.getByLabel('搜尋關鍵字').fill('陶')
   await expect(page).toHaveURL(/q=%E9%99%B6/)
   const filters = page.locator('#filter-panel')
