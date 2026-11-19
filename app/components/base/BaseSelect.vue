@@ -88,12 +88,6 @@ const describedBy = computed(() => (props.error ? errorId : undefined))
     align-items: center;
     gap: space(2);
 
-    // 選單填滿剩下的寬度，外層決定整體寬度
-    .select-field__control {
-      flex: 1;
-      min-width: 0;
-    }
-
     .select-field__label {
       font-weight: 400;
       color: color('text-muted');

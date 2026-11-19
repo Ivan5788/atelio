@@ -262,24 +262,25 @@ const resultsRef = ref<HTMLElement>()
   }
 }
 
-// 手機／平板：搜尋獨佔一列，排序與篩選按鈕各佔一半寬度並左右對齊
-// 桌機：搜尋、排序同一列，中間拉開距離區隔兩組功能（篩選按鈕在桌機隱藏，篩選面板常駐左側）
+// 手機／平板：搜尋獨佔一列；第二列排序與篩選維持原本寬度，以 space-between 分別貼齊左右兩側
+// 桌機：搜尋與排序同一列，以較大的間距區隔兩組功能（篩選按鈕在桌機隱藏，篩選面板常駐左側）
 .toolbar {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: space(3);
 
   @include bp(lg) {
-    display: flex;
+    flex-wrap: nowrap;
     gap: space(7);
   }
 
   &__search {
-    grid-column: 1 / -1;
+    flex: 1 1 100%;
 
     @include bp(lg) {
-      flex: 1;
+      flex-basis: auto;
     }
   }
 
@@ -294,20 +295,13 @@ const resultsRef = ref<HTMLElement>()
   }
 
   &__sort {
-    min-width: 0;
-
-    @include bp(lg) {
-      flex: none;
-      width: 240px;
-    }
+    min-width: 160px;
   }
 
   &__filter-toggle {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: space(2);
-    width: 100%;
     min-height: 44px;
     padding: 0 space(4);
     border: 1px solid color('border-strong');
