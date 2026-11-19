@@ -1,0 +1,9 @@
+.nuxt
+.output
+.vercel
+node_modules
+coverage
+playwright-report
+test-results
+package-lock.json
+docs

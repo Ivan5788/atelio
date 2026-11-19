@@ -1,0 +1,210 @@
+// Design tokens — 與 design/tokens/atelio.tokens.json 一一對應。
+// 修改任何數值時兩邊都要改；tests/unit/tokens.spec.ts 會比對兩者，不一致時測試失敗。
+
+// ── 原始色票（primitive）：元件不直接使用 ─────────────────────
+$palette: (
+  'ivory': #fdfff5,
+  'white': #ffffff,
+  'cocoa-900': #5d493e,
+  'cocoa-700': #78645d,
+  'cocoa-500': #a08876,
+  'latte': #ddc5b4,
+  'latte-100': #efe6dc,
+  'paper-200': #f7f2e8,
+  'sky': #e6f8ff,
+  'sky-200': #daf3fe,
+  'sky-800': #2f6f96,
+  'blush': #ffd2d2,
+  'blush-100': #ffeded,
+  'blush-800': #a3404f,
+  'blush-900': #8a3341,
+  'butter': #fdeec4,
+  'mint': #eafbf1,
+  'green-700': #3a7758,
+  'amber-800': #86590f,
+  'red-100': #ffe3e3,
+  'red-700': #b83f3f,
+  'lavender': #e9dbf6,
+  'sky-300': #cdebfa,
+  'honey': #fbe2a0,
+  'aqua': #cfefea,
+  'mint-300': #cfefda,
+);
+
+// ── 語意色（semantic）：元件只使用這一層 ─────────────────────
+// 值是 primitive 的名稱，輸出 CSS 變數時會變成 var(--palette-xxx)，
+// 將來加深色模式只需要覆寫 --palette-* 或 --color-*，元件不用改。
+$semantic-colors: (
+  'bg-page': 'ivory',
+  'bg-surface': 'white',
+  'bg-sunken': 'paper-200',
+  'bg-inverse': 'cocoa-900',
+  'bg-ticket': 'butter',
+  'bg-organizer': 'mint',
+  'bg-selected': 'blush-100',
+  'text-default': 'cocoa-900',
+  'text-muted': 'cocoa-700',
+  'text-inverse': 'ivory',
+  'text-link': 'blush-800',
+  'text-link-hover': 'blush-900',
+  'border-subtle': 'latte-100',
+  'border-strong': 'cocoa-500',
+  'border-ink': 'cocoa-900',
+  'border-dashed': 'latte',
+  'border-focus': 'sky-800',
+  'action-primary-bg': 'sky',
+  'action-primary-bg-hover': 'sky-200',
+  'action-primary-fg': 'cocoa-900',
+  'action-primary-border': 'cocoa-900',
+  'action-accent': 'blush',
+  'action-accent-fg': 'blush-800',
+  'action-danger-bg': 'red-700',
+  'action-danger-fg': 'white',
+  'status-success-fg': 'green-700',
+  'status-success-bg': 'mint',
+  'status-warning-fg': 'amber-800',
+  'status-warning-bg': 'butter',
+  'status-danger-fg': 'red-700',
+  'status-danger-bg': 'red-100',
+  'status-info-fg': 'sky-800',
+  'status-info-bg': 'sky',
+  'category-ceramics': 'blush',
+  'category-leathercraft': 'latte',
+  'category-floral': 'lavender',
+  'category-printmaking': 'sky-300',
+  'category-typography': 'cocoa-900',
+  'category-woodworking': 'honey',
+  'category-textile': 'aqua',
+  'category-illustration': 'mint-300',
+);
+
+// ── 間距（4px 基準）────────────────────────────────────────
+$space: (
+  '1': 4px,
+  '2': 8px,
+  '3': 12px,
+  '4': 16px,
+  '5': 24px,
+  '6': 32px,
+  '7': 48px,
+  '8': 64px,
+  '9': 96px,
+);
+
+$radius: (
+  'sm': 6px,
+  'md': 12px,
+  'lg': 18px,
+  'full': 999px,
+);
+
+// ── 字體 ──────────────────────────────────────────────────
+$font-family: (
+  'display': (
+    'Noto Serif TC',
+    serif,
+  ),
+  'body': (
+    'PingFang TC',
+    'Microsoft JhengHei',
+    'Noto Sans TC',
+    system-ui,
+    sans-serif,
+  ),
+  'mono': (
+    'IBM Plex Mono',
+    monospace,
+  ),
+);
+
+// 每個字級：(手機, 桌機, 行高)
+$type-scale: (
+  'display': (
+    36px,
+    56px,
+    1.15,
+  ),
+  'h1': (
+    30px,
+    40px,
+    1.2,
+  ),
+  'h2': (
+    24px,
+    30px,
+    1.3,
+  ),
+  'h3': (
+    20px,
+    22px,
+    1.4,
+  ),
+  'h4': (
+    18px,
+    18px,
+    1.4,
+  ),
+  'body-lg': (
+    17px,
+    18px,
+    1.75,
+  ),
+  'body': (
+    16px,
+    16px,
+    1.7,
+  ),
+  'body-sm': (
+    14px,
+    14px,
+    1.6,
+  ),
+  'caption': (
+    13px,
+    13px,
+    1.5,
+  ),
+  'mono': (
+    14px,
+    14px,
+    1.4,
+  ),
+);
+
+// ── 陰影 ──────────────────────────────────────────────────
+$shadow: (
+  'sm': 0 1px 2px rgb(93 73 62 / 0.06),
+  'md': 0 6px 16px rgb(93 73 62 / 0.08),
+  'lg': 0 12px 32px rgb(93 73 62 / 0.18),
+  'sticker': 0 4px 0 #efe6dc,
+  'sticker-hover': 0 4px 0 #5d493e,
+);
+
+// ── 動態 ──────────────────────────────────────────────────
+$duration: (
+  'fast': 120ms,
+  'base': 200ms,
+  'slow': 320ms,
+);
+
+$easing: (
+  'out': cubic-bezier(0.2, 0.7, 0.2, 1),
+  'in': cubic-bezier(0.4, 0, 1, 1),
+);
+
+// ── 斷點（Mobile-first，min-width）─────────────────────────
+$breakpoints: (
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+);
+
+$z-index: (
+  'dropdown': 100,
+  'header': 200,
+  'overlay': 300,
+  'modal': 400,
+  'toast': 500,
+);
+
+$content-max-width: 1200px;

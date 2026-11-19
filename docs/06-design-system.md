@@ -50,6 +50,8 @@ Atelio 的使用者要找的是**親手做東西的療癒體驗**，所以介面
 >
 > **v0.3.2**：ink-muted 加深為 `#78645D`，次要文字在票根、淺灰區塊、天空藍上也全部通過 4.5:1。
 
+> **實作命名**：程式中的 CSS 變數分兩層——原始色票為 `--palette-*`（例如 `--palette-cocoa-900`），元件只使用語意變數 `--color-*`（例如 `--color-text-default`）。下表的 `--color-ivory` 等是設計階段的稱呼，對照表見 [design/tokens/atelio.tokens.json](../design/tokens/atelio.tokens.json)。
+
 **主色票（求職者選定）**
 
 | Token | 色碼 | 用途 |

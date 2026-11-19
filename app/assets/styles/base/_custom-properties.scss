@@ -1,0 +1,47 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use '../abstracts' as *;
+
+// 把 SCSS token 輸出成 CSS 變數（ADR-006：token 只定義一次）。
+// 語意色引用原始色票的變數，而不是直接寫色碼，
+// 所以深色模式只需要覆寫 --palette-* 或 --color-*。
+:root {
+  @each $name, $value in $palette {
+    --palette-#{$name}: #{$value};
+  }
+
+  @each $name, $ref in $semantic-colors {
+    --color-#{$name}: var(--palette-#{$ref});
+  }
+
+  @each $name, $value in $space {
+    --space-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $radius {
+    --radius-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $shadow {
+    --shadow-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $duration {
+    --duration-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $font-family {
+    --font-#{$name}: #{meta.inspect($value)};
+  }
+
+  --content-max-width: #{$content-max-width};
+}
+
+// 減少動態時，所有 duration 歸零（transition 仍存在但瞬間完成）
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    @each $name, $value in $duration {
+      --duration-#{$name}: 0ms;
+    }
+  }
+}

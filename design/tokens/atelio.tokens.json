@@ -113,7 +113,9 @@
     "family": {
       "$type": "fontFamily",
       "display": { "$value": ["Noto Serif TC", "serif"] },
-      "body": { "$value": ["PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "system-ui", "sans-serif"] },
+      "body": {
+        "$value": ["PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "system-ui", "sans-serif"]
+      },
       "mono": { "$value": ["IBM Plex Mono", "monospace"] }
     },
     "size": {
@@ -132,11 +134,51 @@
   },
   "shadow": {
     "$type": "shadow",
-    "sm": { "$value": { "color": "#5D493E0F", "offsetX": "0px", "offsetY": "1px", "blur": "2px", "spread": "0px" } },
-    "md": { "$value": { "color": "#5D493E14", "offsetX": "0px", "offsetY": "6px", "blur": "16px", "spread": "0px" } },
-    "lg": { "$value": { "color": "#5D493E2E", "offsetX": "0px", "offsetY": "12px", "blur": "32px", "spread": "0px" } },
-    "sticker": { "$value": { "color": "#EFE6DC", "offsetX": "0px", "offsetY": "4px", "blur": "0px", "spread": "0px" } },
-    "sticker-hover": { "$value": { "color": "#5D493E", "offsetX": "0px", "offsetY": "4px", "blur": "0px", "spread": "0px" } }
+    "sm": {
+      "$value": {
+        "color": "#5D493E0F",
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0px"
+      }
+    },
+    "md": {
+      "$value": {
+        "color": "#5D493E14",
+        "offsetX": "0px",
+        "offsetY": "6px",
+        "blur": "16px",
+        "spread": "0px"
+      }
+    },
+    "lg": {
+      "$value": {
+        "color": "#5D493E2E",
+        "offsetX": "0px",
+        "offsetY": "12px",
+        "blur": "32px",
+        "spread": "0px"
+      }
+    },
+    "sticker": {
+      "$value": {
+        "color": "#EFE6DC",
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "0px",
+        "spread": "0px"
+      }
+    },
+    "sticker-hover": {
+      "$value": {
+        "color": "#5D493E",
+        "offsetX": "0px",
+        "offsetY": "4px",
+        "blur": "0px",
+        "spread": "0px"
+      }
+    }
   },
   "duration": {
     "$type": "duration",

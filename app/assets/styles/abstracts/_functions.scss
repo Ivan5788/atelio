@@ -1,0 +1,47 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'tokens' as *;
+
+/// px → rem（以瀏覽器預設 16px 為基準）
+@function rem($px) {
+  @return math.div($px, 16px) * 1rem;
+}
+
+// 取 token 時一律經過函式：打錯名稱會在編譯時就報錯，而不是靜默輸出空值。
+@function _get($map, $key, $name) {
+  @if not map.has-key($map, $key) {
+    @error 'Unknown #{$name} token: "#{$key}". Available: #{map.keys($map)}';
+  }
+  @return map.get($map, $key);
+}
+
+/// 語意色，輸出 CSS 變數，例如 color('text-muted') → var(--color-text-muted)
+@function color($key) {
+  $_: _get($semantic-colors, $key, 'color');
+  @return var(--color-#{$key});
+}
+
+/// 間距，例如 space(4) → var(--space-4)
+@function space($key) {
+  $_: _get($space, '#{$key}', 'space');
+  @return var(--space-#{$key});
+}
+
+@function radius($key) {
+  $_: _get($radius, $key, 'radius');
+  @return var(--radius-#{$key});
+}
+
+@function shadow($key) {
+  $_: _get($shadow, $key, 'shadow');
+  @return var(--shadow-#{$key});
+}
+
+@function duration($key) {
+  $_: _get($duration, $key, 'duration');
+  @return var(--duration-#{$key});
+}
+
+@function z($key) {
+  @return _get($z-index, $key, 'z-index');
+}

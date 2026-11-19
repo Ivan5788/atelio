@@ -1,0 +1,95 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:math';
+@use 'tokens' as *;
+@use 'functions' as *;
+
+/// Mobile-first 斷點：@include bp(md) { ... }
+@mixin bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error 'Unknown breakpoint "#{$name}". Available: #{map.keys($breakpoints)}';
+  }
+  @media (min-width: map.get($breakpoints, $name)) {
+    @content;
+  }
+}
+
+/// 文字樣式：手機與桌機字級不同時，以 clamp() 在 390px–1280px 之間平滑縮放，
+/// 不需要在每個斷點各寫一次 font-size。
+@mixin text($name) {
+  $spec: map.get($type-scale, $name);
+  @if not $spec {
+    @error 'Unknown type token "#{$name}".';
+  }
+  $min: list.nth($spec, 1);
+  $max: list.nth($spec, 2);
+  $line-height: list.nth($spec, 3);
+
+  // 輸出 rem 而不是 px：使用者在瀏覽器調大預設字級時，文字會跟著放大（WCAG 1.4.4）。
+  @if $min == $max {
+    font-size: rem($min);
+  } @else {
+    // 線性插值：390px 時為 $min、1280px 時為 $max
+    $slope: math.div($max - $min, 1280px - 390px);
+    font-size: clamp(#{rem($min)}, calc(#{rem($min)} + (100vw - 390px) * #{$slope}), #{rem($max)});
+  }
+  line-height: $line-height;
+
+  @if $name == 'display' or $name == 'h1' or $name == 'h2' {
+    font-family: var(--font-display);
+    font-weight: 700;
+  } @else if $name == 'h3' or $name == 'h4' {
+    font-family: var(--font-display);
+    font-weight: 600;
+  } @else if $name == 'mono' {
+    font-family: var(--font-mono);
+    font-weight: 500;
+  }
+}
+
+/// 只在鍵盤操作時顯示焦點框
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid color('border-focus');
+    outline-offset: 2px;
+  }
+}
+
+/// 畫面上隱藏、螢幕閱讀器仍會讀出
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/// 尊重使用者的「減少動態」設定
+@mixin motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+/// 手帳貼紙感：描邊＋實心底影，hover 時上移並換成可可色底影
+@mixin sticker($interactive: true) {
+  border: 1.5px solid color('border-ink');
+  box-shadow: shadow('sticker');
+
+  @if $interactive {
+    @include motion-safe {
+      transition:
+        transform duration('fast') map.get($easing, 'out'),
+        box-shadow duration('fast') map.get($easing, 'out');
+    }
+
+    &:hover {
+      box-shadow: shadow('sticker-hover');
+      transform: translateY(-2px);
+    }
+  }
+}

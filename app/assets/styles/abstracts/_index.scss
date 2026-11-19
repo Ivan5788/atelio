@@ -1,0 +1,5 @@
+// 只轉出變數、函式與 mixin，不輸出任何 CSS。
+// 由 nuxt.config.ts 的 additionalData 注入到每個元件的 <style lang="scss">。
+@forward 'tokens';
+@forward 'functions';
+@forward 'mixins';

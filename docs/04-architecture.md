@@ -175,10 +175,11 @@ atelio-workshop-platform/
 **分層規則（Code Review 檢查點）**
 1. `pages/` 只負責組合元件與取得資料，不寫複雜邏輯。
 2. `components/base/` 不得呼叫 API 或使用業務 Store。
-6. `app/` 不得 import `server/` 的任何檔案；機密只能放在 `runtimeConfig` 的私有區塊，不可放 `runtimeConfig.public`。
 3. 元件不直接呼叫 `$fetch`，一律透過 `services/`。
 4. 型別定義集中在 `shared/types/`，前端與 server 共用同一份 API 契約。
 5. 可以獨立測試的邏輯（篩選、驗證、金額計算）放 `utils/`，寫成純函式。
+6. `app/` 不得 import `server/` 的任何檔案；機密只能放在 `runtimeConfig` 的私有區塊，不可放 `runtimeConfig.public`。
+7. 設計 Token 的唯一來源是 `design/tokens/atelio.tokens.json`；SCSS 與 JSON 不一致時單元測試會失敗。
 
 ---
 

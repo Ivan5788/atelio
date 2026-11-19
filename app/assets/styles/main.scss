@@ -1,0 +1,6 @@
+// 全域樣式進入點（nuxt.config.ts → css）。
+// 順序：CSS 變數 → reset → 基本排版 → 工具類別。
+@use 'base/custom-properties';
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/utilities';

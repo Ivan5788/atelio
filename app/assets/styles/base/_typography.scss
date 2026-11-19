@@ -1,0 +1,49 @@
+@use '../abstracts' as *;
+
+body {
+  background: color('bg-page');
+  color: color('text-default');
+  font-family: var(--font-body);
+  @include text('body');
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  @include text('h1');
+}
+
+h2 {
+  @include text('h2');
+}
+
+h3 {
+  @include text('h3');
+}
+
+h4 {
+  @include text('h4');
+}
+
+a {
+  color: color('text-link');
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    color: color('text-link-hover');
+  }
+}
+
+a,
+button,
+input,
+select,
+textarea,
+summary,
+[tabindex] {
+  @include focus-ring;
+}
+
+::selection {
+  background: var(--palette-blush);
+  color: color('text-default');
+}
