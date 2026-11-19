@@ -42,3 +42,45 @@ test('health endpoint responds without leaking config', async ({ request }) => {
   expect(body.status).toBe('ok')
   expect(JSON.stringify(body)).not.toMatch(/token|password|secret/i)
 })
+
+test('public pages are server-rendered with their main content in the HTML', async ({
+  request,
+}) => {
+  const pages: [string, string][] = [
+    ['/workshops', '探索工作坊'],
+    ['/workshops/wheel-throwing-basics-taipei', '拉坯入門：做出第一只茶碗'],
+    ['/categories/ceramics', '陶藝工作坊'],
+    ['/cities/tainan', '台南的手作工作坊'],
+    ['/instructors', '陳以禾'],
+    ['/instructors/chen-yihe', '土窯工作室'],
+    ['/journal', '知識專欄'],
+    ['/journal/first-pottery-class-checklist', '指甲剪短'],
+    ['/faq', '可以取消預約嗎？'],
+    ['/about', '作品聲明'],
+    ['/for-organizers', '開課者專區'],
+  ]
+  for (const [path, text] of pages) {
+    const res = await request.get(path)
+    expect(res.status(), path).toBe(200)
+    expect(await res.text(), path).toContain(text)
+  }
+})
+
+test('unknown workshop, category and instructor return HTTP 404', async ({ request }) => {
+  for (const path of [
+    '/workshops/nope',
+    '/categories/nope',
+    '/cities/nope',
+    '/instructors/nope',
+    '/journal/nope',
+  ]) {
+    expect((await request.get(path)).status(), path).toBe(404)
+  }
+})
+
+test('filtered list pages are not indexable', async ({ page }) => {
+  await page.goto('/workshops?category=ceramics')
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
+  await page.goto('/workshops')
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /index, follow/)
+})

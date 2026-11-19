@@ -3,6 +3,8 @@
 // 渲染策略與資安設定的決策理由見 docs/04-architecture.md（ADR-001、ADR-003）
 // 與 docs/05-security.md。
 
+import { articles } from './server/data/articles'
+
 const noindex = { 'X-Robots-Tag': 'noindex, nofollow' }
 
 // Upstash 環境變數存在時（Vercel 正式／預覽環境）使用 Redis；
@@ -83,12 +85,11 @@ export default defineNuxtConfig({
     // 首頁有「近期場次」，場次日期依當下時間計算；prerender 會凍結在建置當天，
     // 所以改用 ISR，每小時重新產生一次。
     '/': { isr: 3600 },
-    // 以下頁面在 Phase 4 完成後取消註解；路徑寫進 prerender 但頁面不存在時，建置會失敗。
-    // '/faq': { prerender: true },
-    // '/about': { prerender: true },
-    // '/for-organizers': { prerender: true },
+    '/faq': { prerender: true },
+    '/about': { prerender: true },
+    '/for-organizers': { prerender: true },
     '/journal/**': { prerender: true },
-    // '/instructors': { prerender: true },
+    '/instructors': { prerender: true },
 
     // Vercel ISR：第一次請求時渲染，之後 CDN 快取 1 小時
     '/workshops/**': { isr: 3600 },
@@ -114,6 +115,11 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    prerender: {
+      // routeRules 的 prerender 只標記「這些路徑要預先產生」，不會自己找出有哪些文章；
+      // 不開 crawlLinks（會順著連結把 ISR 頁面也變成靜態），改為明確列出文章網址。
+      routes: ['/journal', ...articles.map((a) => `/journal/${a.slug}`)],
+    },
     storage: {
       data: useUpstash ? { driver: 'upstash' } : { driver: 'memory' },
     },

@@ -4,8 +4,8 @@
  * 修改失敗時錯誤顯示在 Modal 內、保留使用者的輸入（docs/03-user-flow.md Flow 2）。
  */
 import type { Booking } from '#shared/types/domain'
-import { MAX_BOOKING_QUANTITY } from '#shared/schemas'
 import {
+  MAX_BOOKING_QUANTITY,
   bookingPhase,
   calculateTotal,
   canModifyBooking,

@@ -54,7 +54,7 @@ graph TD
 
 | 路由 | 頁面 | 渲染 | 索引 | 結構化資料 |
 | --- | --- | --- | --- | --- |
-| `/` | 首頁 | Prerender | ✅ | `WebSite`（含 SearchAction）、`Organization` |
+| `/` | 首頁 | ISR（Phase 4 由 Prerender 改為 ISR：近期場次依當下時間計算，prerender 會凍結在建置當天） | ✅ | `WebSite`（含 SearchAction）、`Organization` |
 | `/workshops` | 工作坊列表 | SSR | ✅（僅無 query 版本） | `ItemList`、`BreadcrumbList` |
 | `/workshops?…` | 篩選結果 | SSR | ❌ `noindex,follow`，canonical 指回 `/workshops` | — |
 | `/categories/:category` | 分類落地頁 | ISR | ✅ | `CollectionPage`、`ItemList`、`BreadcrumbList` |

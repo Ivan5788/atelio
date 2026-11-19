@@ -6,6 +6,7 @@
  */
 import { z } from 'zod'
 import { CATEGORY_SLUGS, CITY_SLUGS, LEVELS, SORTS } from '../types/domain'
+import { MAX_BOOKING_QUANTITY } from '../utils/booking'
 
 // Zod 內建錯誤訊息（未自訂訊息的欄位）使用繁體中文
 z.config(z.locales.zhTW())
@@ -111,7 +112,7 @@ export const profileSchema = z.object({
 export type ProfileInput = z.infer<typeof profileSchema>
 
 // ── 預約 ──────────────────────────────────────────────
-export const MAX_BOOKING_QUANTITY = 6
+export { MAX_BOOKING_QUANTITY }
 
 export const quantitySchema = z.coerce
   .number()

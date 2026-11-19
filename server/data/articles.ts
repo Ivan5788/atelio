@@ -3,7 +3,8 @@
  * 渲染時用一般 Vue 模板輸出，不使用 v-html（docs/05-security.md C-07）。
  * 作者「Atelio 編輯室」為虛構編輯名義，文章內容為一般性的手作建議。
  */
-import type { Article } from '#shared/types/domain'
+// 相對路徑：這個檔案也會被 nuxt.config.ts 匯入（列出要 prerender 的文章），設定檔環境沒有 #shared 別名
+import type { Article } from '../../shared/types/domain'
 
 export const articles: Article[] = [
   {

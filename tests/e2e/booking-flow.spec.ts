@@ -89,6 +89,8 @@ test('private pages redirect to login and back', async ({ page }) => {
 
 test('favorite toggles from the list and appears in account favorites', async ({ page }) => {
   await page.goto('/workshops/watercolor-basics-taipei')
+  // 等登入狀態讀取完成（Header 出現「登入」）才互動，確保頁面已 hydrate、按鈕事件已綁定
+  await expect(page.getByRole('link', { name: '登入', exact: true })).toBeVisible()
   // 未登入：開啟登入提示
   await page.getByRole('button', { name: '收藏' }).first().click()
   const prompt = page.getByRole('dialog', { name: '登入後即可收藏' })

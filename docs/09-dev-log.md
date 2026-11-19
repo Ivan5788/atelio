@@ -46,3 +46,51 @@
 ### 尚未處理
 - `npm audit` 結果尚未逐項評估（Phase 6）。
 - Vercel 部署與環境變數設定由求職者本人操作（Phase 7）。
+
+---
+
+## Phase 4 — 功能開發（2026-11-19）
+
+### 做了什麼
+分成五個 commit，每個都通過 lint、型別檢查與測試才提交：
+
+1. **資料層與 API**：共用型別與 Zod schema、24 堂虛構工作坊（場次依當下時間產生）、catalog／booking／studio／auth 四個 service、Redis 資料以 `user:{id}:*` 隔離並設 72 小時 TTL、Origin／Content-Type／大小檢查與速率限制。API 規格見 [10-api.md](10-api.md)。
+2. **版面與公開頁面**：Header、Footer、Demo 提示列、登入提示、Toast、換頁朗讀（`NuxtRouteAnnouncer`）；Base 元件（Input、Select、Modal、Tabs、Quantity、Pagination、Skeleton、EmptyState）；首頁、列表（篩選同步網址）、詳細頁、分類頁、城市頁、搜尋頁。
+3. **會員流程**：登入、註冊、預約三步驟（草稿存 Pinia、409 時回到第一步）、預約完成頁（可下載 .ics）、會員中心、我的預約（修改人數／取消 Modal）、收藏、個人資料。
+4. **Studio**：KPI、報名趨勢折線圖、各工作坊報名數長條圖（Chart.js 動態載入、附表格檢視）、工作坊表格（搜尋、篩選、排序、上架開關、刪除）、新增／編輯表單（動態場次、錯誤摘要、未儲存提醒）。
+5. **資訊頁**：講師列表與講師頁、知識專欄與文章頁、FAQ、關於、開課者介紹；重新啟用 prerender 規則。
+
+### 問題與決策
+| 問題 | 處理 |
+| --- | --- |
+| Seed 若寫死日期，部署幾週後場次全部過期 | Seed 只寫「每週幾、幾點」，請求時依當下時間產生場次；已報名人數用場次 id 雜湊決定，每次結果相同 |
+| 首頁有「近期場次」，prerender 會凍結在建置當天 | 首頁改為 ISR（每小時重新產生），sitemap 文件同步更新 |
+| 所有訪客的預約若一起扣名額，示範網站會慢慢全部額滿，訪客之間也互相影響 | 名額 = 容量 − 示範報名數 − **自己的**預約 |
+| 詳細頁被 ISR 快取，若在伺服器讀 Session，A 的資料可能被快取給 B | 公開 API 不讀 Session；個人化名額另外由 `/api/workshops/:slug/sessions` 在瀏覽器取得；登入狀態設為 `loadStrategy: 'client-only'` |
+| 列表頁 `/workshops/**` 的 ISR 規則也會比對到 `/workshops` 本身 | 明確設定 `'/workshops': { isr: false }`；以 Vercel preset 建置後檢查 `.vercel/output/config.json`，確認 `/workshops` 走 SSR、詳細頁走 ISR |
+| nuxt-auth-utils 0.6 的金鑰來源是 Nuxt `appSecret`，不是規劃時寫的 `NUXT_SESSION_PASSWORD` | `.env.example`、CI、資安文件改為 `NUXT_APP_SECRET` |
+| nuxt-security 的請求大小限制不檢查 PATCH | 自己的 `01.api-guard.ts` 對所有變更請求檢查 100 KB 上限 |
+| **開發時實測：瀏覽 8 個頁面就被限流（429）**。伺服器渲染與 payload 預載會在內部呼叫公開 API，約 200 次 | 只對會讀寫 Redis 的端點限流（`/api/me`、`/api/studio`、個人化名額、登入類）。公開目錄 API 不碰資料庫，對它限流反而每次都要花一次 Redis 指令 |
+| **E2E 抓到：送出按鈕按了沒反應**。滑鼠按下時欄位 blur → 顯示錯誤訊息把按鈕往下推 → 放開時已不在按鈕上 | `useZodForm` 在 pointerdown（早於 blur）偵測到按下送出按鈕時，略過那一次 blur 驗證 |
+| **E2E 抓到：`/workshops/nope` 回傳 HTTP 200 的空白頁**。Nuxt 4 的 `useAsyncData` 會把錯誤收進 `error`，不會中斷渲染 | 新增 `usePageData`：await 後檢查 `error`，以 fatal 錯誤回傳真正的 404 |
+| 手機版 Studio 表格與我的預約出現水平捲軸 | 外框 grid 在手機也使用 `minmax(0, 1fr)`，表格在自己的捲動容器內捲動 |
+| 詳細頁只為了一個常數從 schema 檔匯入，連帶載入整個 Zod（88.7 KB） | 常數移到 `shared/utils/booking.ts`；重新建置後確認 Zod 只出現在列表頁與表單頁 |
+| 示範課程用真實照片容易被誤認為真的課程，也有授權問題 | 封面改用分類色＋線條圖示的插畫式封面，不需要下載圖片 |
+| 「各工作坊報名佔比」若用甜甜圈圖，難以比較各項大小 | 改用排序後的單色橫向長條圖；兩張圖都是單一數列，不需要圖例，並附表格檢視 |
+| 剛載入的 SSR 頁面在 hydration 完成前，按鈕還沒有事件 | E2E 測試等 Header 的登入狀態出現後才互動。這是 SSR 的一般取捨，記錄在此 |
+
+### 實際執行結果
+| 檢查 | 結果 |
+| --- | --- |
+| `npm run lint`／`format:check`／`typecheck` | 0 錯誤／通過／通過 |
+| `npm test` | 10 個檔案、211 個測試通過 |
+| `npm run test:e2e` | 36 個通過、8 個略過（API 安全測試只在桌機跑一次） |
+| API 手動測試（本機正式版建置） | 竄改價格被忽略、名額不足 409、跨帳號存取 404、缺 Origin 403、表單格式 415、登入類第 11 次起 429 |
+| Prerender 產出 | `/about`、`/faq`、`/for-organizers`、`/instructors`、`/journal` 與 4 篇文章、`/dev/styleguide` |
+| 手機 390px／桌機 1440px 截圖 | 修正後所有檢查頁面無水平捲軸 |
+| Chart.js | 獨立 chunk（161 KB 未壓縮），只有 Studio 載入 |
+
+### 尚未處理
+- 本機 node 預覽環境下，首頁 `/_payload.json` 預載回 404：node preset 不支援 ISR 規則；Vercel preset 的產出有對應的 ISR 函式，需部署後確認（Phase 7）。
+- 結構化資料（JSON-LD）、sitemap.xml、robots.txt、llms.txt（Phase 5）。
+- Lighthouse 與無障礙稽核、CSP 實測、`npm audit`（Phase 6）。

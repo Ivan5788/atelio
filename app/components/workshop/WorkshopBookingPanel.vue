@@ -7,9 +7,8 @@
  * 金額只是預覽，實際金額由伺服器在建立預約時計算。
  */
 import type { Workshop, WorkshopSession } from '#shared/types/domain'
-import { MAX_BOOKING_QUANTITY } from '#shared/schemas'
 import { formatPrice, formatSessionShort, seatsLabel } from '#shared/utils/format'
-import { calculateTotal, FREE_CANCEL_HOURS } from '#shared/utils/booking'
+import { MAX_BOOKING_QUANTITY, calculateTotal, FREE_CANCEL_HOURS } from '#shared/utils/booking'
 import { catalogService } from '~/services/catalog.service'
 
 const props = defineProps<{ workshop: Workshop }>()

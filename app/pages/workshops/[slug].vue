@@ -9,21 +9,16 @@ import { formatDate, formatDuration, formatPrice } from '#shared/utils/format'
 import { catalogService } from '~/services/catalog.service'
 import { useToastStore } from '~/stores/toast'
 
+// 在同一種頁面之間切換（例如點相關工作坊）時重新建立元件，資料與捲動狀態不殘留
+definePageMeta({ key: (route) => route.fullPath })
+
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
 
-const { data } = await useAsyncData(
-  () => `workshop-${slug.value}`,
-  async () => {
-    try {
-      return await catalogService.getWorkshop(slug.value)
-    } catch (error) {
-      if ((error as { statusCode?: number }).statusCode === 404) {
-        throw createError({ statusCode: 404, statusMessage: '找不到這堂工作坊', fatal: true })
-      }
-      throw error
-    }
-  },
+const data = await usePageData(
+  `workshop-${slug.value}`,
+  () => catalogService.getWorkshop(slug.value),
+  '找不到這堂工作坊',
 )
 
 const workshop = computed(() => data.value?.workshop)

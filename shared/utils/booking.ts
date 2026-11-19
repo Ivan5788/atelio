@@ -4,6 +4,9 @@
  */
 import type { Booking } from '../types/domain'
 
+/** 每筆預約的人數上限。放在這裡（而不是 schemas）是為了讓詳細頁不必為了一個常數載入整個 Zod */
+export const MAX_BOOKING_QUANTITY = 6
+
 /** 開課前多少小時內不能線上取消或修改 */
 export const FREE_CANCEL_HOURS = 72
 
