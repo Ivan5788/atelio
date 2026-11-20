@@ -11,7 +11,7 @@ export default defineEventHandler(async () => {
 
   return {
     status: storageOk ? 'ok' : 'degraded',
-    storage: process.env.UPSTASH_REDIS_REST_URL ? 'upstash' : 'memory',
+    storage: getRedisCredentials() ? 'upstash' : 'memory',
     time: new Date().toISOString(),
   }
 })

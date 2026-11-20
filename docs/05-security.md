@@ -78,7 +78,7 @@
 | 環境變數 | 用途 | 是否機密 |
 | --- | --- | --- |
 | `NUXT_APP_SECRET` | Nuxt appSecret，nuxt-auth-utils 0.6 由它衍生 Session 加密金鑰（`openssl rand -base64 32`） | ✅ |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Redis 連線（Vercel Marketplace 整合會自動注入） | ✅ |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`<br>（或 `KV_REST_API_URL` / `KV_REST_API_TOKEN`） | Redis 連線。透過 Vercel Marketplace 連接 Upstash 時會自動注入 `KV_REST_API_*`，兩組名稱程式都接受（`server/utils/redis-env.ts`）。在執行時讀取，不寫進建置產出 | ✅ |
 | `NUXT_PUBLIC_SITE_URL` | 正式網址（canonical、sitemap 使用） | ❌ |
 
 ---
@@ -132,7 +132,7 @@
 | C-08a | 快取頁面的 CSP | 檢查 SSR／ISR 與預先產生頁面的標頭 | 全站改用 hash：預先產生頁面由 nuxt-security 計算，SSR／ISR 頁面由 `server/plugins/csp-ssr-hashes.ts` 計算。所有頁面（含登入後的會員中心與 Studio）CSP 違規 0 件 ✅ |
 | C-10 | 機密不進前端 | 以假的「金絲雀」機密建置後搜尋 `.output` | 前端與伺服器產出皆 0 筆 ✅ |
 | C-11 | Origin／Content-Type | E2E | 缺少或外站 Origin 回 403；表單格式回 415 ✅ |
-| C-13 | 依賴弱點 | `npm audit` | 0 high／critical；12 moderate，見下方說明 |
+| C-13 | 依賴弱點 | `npm audit` | 0 high／critical；2 個 moderate 弱點（報告計為 12 筆），僅在建置與測試工具，見下方評估 |
 | C-14 | 登入失敗訊息 | E2E 比較錯誤密碼與不存在的帳號 | 狀態碼與訊息完全相同 ✅ |
 
 ### CSP 的取捨（更新）
@@ -140,11 +140,17 @@
 - **style-src**：仍允許 `'unsafe-inline'`。Nuxt 會內嵌元件 CSS，Vue 的 `:style` 綁定也會產生 style 屬性。樣式注入無法執行程式，風險明顯低於腳本注入。
 - **Zod**：設定 `jitless: true`。Zod 4 預設會嘗試用 `new Function` 加速驗證，被 CSP 擋下後才退回，每頁都留下一則違規紀錄（Lighthouse 最佳做法因此只有 96 分）。
 
-### npm audit：12 個 moderate
-全部來自同一個問題：`minimatch` 的 ReDoS（GHSA-g3hv-75wg-m249，修正版 11.0.1），經由 `nitropack → archiver → readdir-glob` 與測試工具 `@vue/test-utils → js-beautify → editorconfig` 引入。
-- **不在執行環境中**：正式執行的 `.output/server` 內沒有這些套件（實際檢查 39 個打包套件）。
-- **無法被利用**：它們只在建置與測試時處理專案自己的 glob 設定，不接觸使用者輸入。
-- **處理方式**：`npm audit fix --force` 會降版測試工具（破壞性變更），因此不執行；CI 以 `--audit-level=high` 把關，並新增 `.github/dependabot.yml` 追蹤 Nuxt 上游更新。
+### 依賴風險評估（npm audit）
+報告顯示 12 個 moderate，但實際只有 **2 個弱點**，其餘 10 個是依賴它們而被連帶標記的上層套件：
+
+| 套件 | 弱點 | 依賴路徑 |
+| --- | --- | --- |
+| `minimatch` 10.2.6 | 特製的檔名規則造成計算量暴增，導致阻斷服務（[GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249)） | 建置：`nuxt → nitropack → archiver → readdir-glob`；測試：`@vue/test-utils → js-beautify → editorconfig` |
+| `glob` 13.0.7 | 逾時中止訊號失效，搜尋會繼續掃描檔案系統（[GHSA-3g3m-2fjr-6pw4](https://github.com/advisories/GHSA-3g3m-2fjr-6pw4)） | 測試：`@vue/test-utils → js-beautify` |
+
+- **不在執行環境中**：正式執行的 `.output/server/node_modules` 內沒有 `minimatch`、`glob`、`archiver`、`js-beautify`，它們只在本機建置與測試時使用。
+- **沒有攻擊面**：觸發條件是能控制檔名規則或搜尋參數，而這些值只來自專案自己的設定，不接觸使用者輸入。
+- **處理方式**：npm 建議的 `npm audit fix --force` 是把 `nuxt` 降到 4.6.3、`@vue/test-utils` 降到 2.4.11（破壞性變更），因此不執行。CI 以 `--audit-level=high` 把關，`.github/dependabot.yml` 每週追蹤上游更新，修正版釋出後隨依賴更新移除。
 
 ### 尚待部署後確認（Phase 7）
 - securityheaders.com、Mozilla Observatory 的評分（需要公開網址）。

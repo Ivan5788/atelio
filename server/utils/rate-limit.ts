@@ -7,6 +7,7 @@
  */
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import { getRedisCredentials } from './redis-env'
 
 export interface RateLimitResult {
   success: boolean
@@ -49,14 +50,14 @@ export function getRateLimiter(name: string, max: number, windowSeconds: number)
   const cacheKey = `${name}:${max}:${windowSeconds}`
   let limiter = limiters.get(cacheKey)
   if (!limiter) {
-    limiter =
-      process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-        ? new Ratelimit({
-            redis: Redis.fromEnv(),
-            limiter: Ratelimit.slidingWindow(max, `${windowSeconds} s`),
-            prefix: `atelio:ratelimit:${name}`,
-          })
-        : createMemoryLimiter(max, windowSeconds * 1000)
+    const credentials = getRedisCredentials()
+    limiter = credentials
+      ? new Ratelimit({
+          redis: new Redis(credentials),
+          limiter: Ratelimit.slidingWindow(max, `${windowSeconds} s`),
+          prefix: `atelio:ratelimit:${name}`,
+        })
+      : createMemoryLimiter(max, windowSeconds * 1000)
     limiters.set(cacheKey, limiter)
   }
   return limiter

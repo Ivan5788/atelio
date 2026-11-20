@@ -14,6 +14,8 @@ test('category menu opens with Enter, closes with Escape and keeps focus on its 
   await waitForHydration(page)
   const button = page.getByRole('button', { name: '分類' })
   await button.focus()
+  // 全套平行執行時曾出現 Enter 沒有作用（單獨重跑 20 次皆通過）：先確認焦點真的在按鈕上再按鍵
+  await expect(button).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(button).toHaveAttribute('aria-expanded', 'true')
   await page.keyboard.press('Tab')

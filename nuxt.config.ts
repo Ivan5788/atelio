@@ -27,13 +27,6 @@ const siteUrl =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'http://localhost:3000')
 
-// Upstash 環境變數存在時（Vercel 正式／預覽環境）使用 Redis；
-// 本機沒有設定時改用 memory，clone 下來不需要任何帳號就能執行。
-// 這段在「建置時」判斷，所以 Vercel 上要在 Build 階段就提供這兩個變數。
-const useUpstash = Boolean(
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN,
-)
-
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
@@ -150,7 +143,9 @@ export default defineNuxtConfig({
       routes: ['/journal', ...articles.map((a) => `/journal/${a.slug}`)],
     },
     storage: {
-      data: useUpstash ? { driver: 'upstash' } : { driver: 'memory' },
+      // 預設 memory：本機與 CI 不需要任何帳號。有 Upstash 連線資訊時，
+      // server/plugins/storage.ts 會在執行時換成 Redis（金鑰不寫進建置產出）。
+      data: { driver: 'memory' },
     },
   },
 

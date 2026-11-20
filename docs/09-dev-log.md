@@ -148,7 +148,7 @@
 | E2E（功能、API 安全、SEO、無障礙、鍵盤） | Playwright | 桌機＋手機共 96 項：78 通過、18 略過（API 安全、SEO、鍵盤測試只在桌機跑） |
 | 無障礙自動檢測 | axe-core 4.14，WCAG 2.2 A／AA | 13 個公開頁面、8 個登入後頁面、對話框開啟、表單錯誤狀態：桌機與手機 **0 違規** |
 | 鍵盤操作 | Playwright | 選單 Esc 關閉、只用鍵盤完成登入到預約、對話框焦點限制與歸還、分頁方向鍵：全部通過 |
-| 依賴弱點 | npm audit | 0 high／critical；12 moderate（建置期工具，不在執行環境，見 05-security.md §8） |
+| 依賴弱點 | npm audit | 0 high／critical；2 個 moderate 弱點（報告計為 12 筆，建置與測試工具，不在執行環境，見 05-security.md §8） |
 | 機密外洩 | 金絲雀字串建置後搜尋產出 | 0 筆 |
 | CSP | 瀏覽器監聽 `securitypolicyviolation` | 移除 `'unsafe-inline'` 後全站 0 違規；插入腳本被阻擋 |
 
@@ -188,3 +188,26 @@
 
 ### 人工檢查（自動化測不到的部分）
 - 螢幕閱讀器（NVDA／VoiceOver）的實際朗讀體驗尚未人工測試；元件已依 WAI-ARIA 模式實作（tabs、dialog、disclosure、live region），列為部署後的人工檢查項目。
+
+## Phase 7 — 作品展示與部署準備（2026-11-20）
+
+### 做了什麼
+- 推上 GitHub（`Ivan5788/atelio`），commit 作者使用 GitHub noreply 信箱。
+- `README.md`：專案介紹、截圖、技術亮點、品質指標、本機執行方式、文件索引。
+- `scripts/screenshots.mjs`：以 Playwright 對正式版建置產生 README 截圖（桌機 1440×900、手機 Pixel 7），可重複執行。
+- [12-deployment.md](12-deployment.md)：Vercel、Upstash 設定步驟與上線後檢查清單。
+- 更正 npm audit 評估：原本寫「全部來自 minimatch」，重新檢查後實際是 `minimatch` 與 `glob` 兩個弱點（[05-security.md](05-security.md) §8）。
+
+### 問題與決策
+| 問題 | 處理 |
+| --- | --- |
+| 透過 Vercel Marketplace 連接 Upstash 時，注入的變數名稱是 `KV_REST_API_URL`／`KV_REST_API_TOKEN`；原本的程式只讀 `UPSTASH_REDIS_REST_*`，而且是在**建置時**決定要不要用 Redis。部署後會靜默退回記憶體儲存（Serverless 上每個請求的資料都可能消失） | 新增 `server/utils/redis-env.ts` 同時接受兩組名稱；`server/plugins/storage.ts` 在**執行時**把 `data` 儲存區換成 Redis。修改環境變數不必為了這兩個值重新建置，金鑰也不會被寫進建置產出 |
+
+### 實際執行結果
+| 檢查 | 結果 |
+| --- | --- |
+| `npm run lint`、`npm run typecheck` | 通過 |
+| `npm test` | 12 個檔案、220 個測試通過 |
+| 以假的 `KV_REST_API_*` 值建置後搜尋 `.output` | 0 筆（金鑰未進入建置產出） |
+| 正式版建置啟動時不給 Redis 變數 | `/api/health` 回 `storage: memory`、`status: ok` |
+| 同一份建置，啟動時給假的 `KV_REST_API_*` | `/api/health` 回 `storage: upstash`、`status: degraded`（確實改連 Redis；主機是假的所以連線失敗，符合預期） |
