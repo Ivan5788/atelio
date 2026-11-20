@@ -45,8 +45,8 @@ openssl rand -base64 32
 3. 建立後 **Connect Project** 連到 `atelio`，勾選 Production 與 Preview。Vercel 會自動加入 `KV_REST_API_URL`、`KV_REST_API_TOKEN` 等變數。
 4. 程式同時接受 `UPSTASH_REDIS_REST_*` 與 `KV_REST_API_*` 兩組名稱（`server/utils/redis-env.ts`），並在**執行時**讀取，所以不需要改名，也不會被寫進建置產出。
 
-### Functions 區域（建議）
-**Settings → Functions → Function Region** 改成與 Upstash 相同的區域（Tokyo, `hnd1`）。每個 API 請求都會連 Redis，兩者在同一區域可以減少延遲。
+### Functions 區域
+已在 `vercel.json` 設定 `"regions": ["hnd1"]`（Tokyo），與 Upstash 同區域，不需要到後台手動調整。預設的 `iad1`（美國東部）離台灣遠，而且每個 API 請求都要跨太平洋連到東京的 Redis（上線實測：健康檢查約 460 ms）。
 
 ---
 
