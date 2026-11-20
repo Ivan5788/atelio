@@ -211,3 +211,22 @@
 | 以假的 `KV_REST_API_*` 值建置後搜尋 `.output` | 0 筆（金鑰未進入建置產出） |
 | 正式版建置啟動時不給 Redis 變數 | `/api/health` 回 `storage: memory`、`status: ok` |
 | 同一份建置，啟動時給假的 `KV_REST_API_*` | `/api/health` 回 `storage: upstash`、`status: degraded`（確實改連 Redis；主機是假的所以連線失敗，符合預期） |
+
+### 部署（2026-11-21，Vercel Hobby ＋ Upstash Redis Tokyo）
+| 問題 | 處理 |
+| --- | --- |
+| 第一次部署後登入回 500（`appSecret` is not set）、健康檢查回 `storage: memory` | 專案還沒有任何環境變數。補上 `NUXT_APP_SECRET`（Production、Preview 各一組）並連接 Upstash（前綴填 `KV`，產生 `KV_REST_API_*`） |
+| 設定後仍無效 | 重新部署到的是 Dependabot PR 的 Preview 部署，Production 沒有重新部署 |
+| Vercel 的 commit 編號與 GitHub repo 對不上 | 匯入時 Vercel 另外建立了 `atelio-by-v` repo（壓成一個 Initial commit）。改連回 `Ivan5788/atelio`，之後 push 到 `main` 才會自動部署 |
+
+### 上線後檢查（`reports/check-live.mjs`，Playwright 對正式網址）
+| 檢查 | 結果 |
+| --- | --- |
+| `/api/health` | `status: ok`、`storage: upstash` |
+| 8 個公開頁面（兩輪） | 全部 200、完成 hydration；第二輪 ISR 頁面為 `X-Vercel-Cache: HIT` |
+| ISR 快取頁面的 CSP | 兩輪皆 0 違規，CDN 快取的 HTML 與 hash 一致（這項本機無法驗證） |
+| 安全標頭 | CSP（`script-src` 無 `unsafe-inline`）、HSTS、X-Content-Type-Options、Referrer-Policy、Permissions-Policy、COOP／CORP、`X-Robots-Tag: noindex, nofollow` |
+| Demo 登入 | 成功，`/api/me` 連續 5 次 200 |
+| 寫入後讀回 | 收藏寫入後連續 8 次請求都讀得到（不同 Serverless 實例共用 Redis） |
+| 預約流程 | 完成預約，重新整理後在「我的預約」中仍存在 |
+| Console | 0 個錯誤 |
