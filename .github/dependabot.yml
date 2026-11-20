@@ -7,6 +7,11 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # TypeScript 7 改寫了編譯器 API，vue-tsc（nuxt typecheck）尚未支援，升級會讓型別檢查失敗。
+      # 鎖定在 6.x，等 vue-tsc 支援後移除這條規則。
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
     groups:
       minor-and-patch:
         update-types: [minor, patch]
