@@ -46,7 +46,7 @@ jobs:
         env:
           # CI 只用來測試，金鑰每次隨機產生，不使用正式環境的值
           NUXT_APP_SECRET: ci-only-${{ github.run_id }}-${{ github.run_attempt }}-padding-to-32-chars
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
